@@ -1,0 +1,175 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-mode="ligth">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/critical.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/header.css' %}">
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    {% block additional_css %} {% endblock additional_css %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static '/forum/js/header.js' %}"></script>
+    <script src="{% static 'forum/js/header_search_ajax.js' %}"></script>
+</head>
+
+<body>
+<svg class="svg__list" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="icon_visitors" viewBox="0 0 190 80">
+        <g transform="translate(-9.999 -108.5)">
+            <g stroke-linejoin="round" stroke-miterlimit="3">
+                <circle cx="105" cy="148.5" r="2.8686" fill="#fff"></circle>
+                <path d="m12.859 148.49c43.473 51.494 140.18 49.956 184.28 0.3538-35.711-45.042-132.49-56.93-184.28-0.3538z"
+                      fill-opacity="0" stroke="#fff" stroke-width="3"></path>
+                <circle cx="105" cy="148.5" r="38.076" fill="none" stroke="#fff" stroke-width="2.9"></circle>
+            </g>
+        </g>
+    </symbol>
+    <symbol id="icon_lupa" viewBox="0 0 189.7 206.87">
+        <path d="m24.035 16.644c-28.851 24.332-31.49 68.685-7.415 96.315 20.072 22.777 52.941 31.284 83.897 15.88l64.462 75.223c5.9592 6.9533 17.305-2.7702 17.305-2.7702s11.346-9.7236 5.3864-16.677l-64.484-75.241c19.019-25.918 19.549-64.037-8.6702-91.331-26.914-24.234-65.402-22.618-90.481-1.3982zm9.4441 11.143a54.077 54.077 0 0 1 76.251 5.8703 54.077 54.077 0 0 1-5.87 76.251 54.077 54.077 0 0 1-76.251-5.8704 54.077 54.077 0 0 1 5.8707-76.251z"
+              fill="#fff" stroke-miterlimit="3.6" stroke-opacity="0"></path>
+    </symbol>
+        <symbol id="icon_man" viewBox="0 0 150.2 149.28">
+            <g transform="translate(-19.15 -19.612)"><path d="m168.8 20.155-61.13 4.6312-7.6827 7.615 8.3597 8.4336 31.98-2.2309-5.3676 5.3206-36.813 36.489c-2.1043-1.7552-5.0726-3.2813-7.8812-4.8498-7.7962-3.7883-15.784-5.3593-23.938-4.9961-26.449 1.3062-45.543 22.212-46.604 46.852-1.5234 26.139 20.06 51.771 50.428 50.949 28.11-1.239 45.672-22.359 47.289-46.006 0.47705-6.2419 0.13301-13.56-4.7764-24.132-1.2275-2.5498-2.5996-4.9052-4.1227-7.058l42.336-41.39-1.4593 11.732-2.0459 19.419 8.2098 8.2827 7.8703-7.8006zm-100.27 64.551a35.037 35.037 0 0 1 24.73 10.371 35.037 35.037 0 0 1-0.21859 49.55 35.037 35.037 0 0 1-49.55-0.21859 35.037 35.037 0 0 1 0.21859-49.55 35.037 35.037 0 0 1 24.82-10.153z" fill="#3e65b6" fill-opacity=".87537" stroke="#000" stroke-miterlimit="3.6"></path></g>
+        </symbol>
+        <symbol id="icon_woman" viewBox="0 0 188.48 188.48">
+            <g transform="translate(-49.213 -.0068579)"><path d="m142.23 0.5156c-12.485 0.23732-24.9 5.2378-34.174 15.286-18.172 19.569-16.846 48.287-0.37362 66.073 6.3547 7.1829 16.971 13.289 26.168 14.724v34.872h-29.856v19.554h29.856v36.966h19.162v-36.966h29.856v-19.554l-29.856-0.0987v-34.696c9.2126-1.6114 19.494-7.4943 25.033-13.55 19.203-19.673 18.468-50.842-1.2247-69.317-9.5517-9.0053-22.106-13.531-34.59-13.294zm1.2206 13.868a34.188 34.188 0 0 1 34.188 34.188 34.188 34.188 0 0 1-34.188 34.188 34.188 34.188 0 0 1-34.188-34.188 34.188 34.188 0 0 1 34.188-34.188z" fill="#f2009c" fill-opacity=".43323" stroke="#000" stroke-miterlimit="3.6"></path></g>
+        </symbol>
+        <symbol id="icon_undefinded" viewBox="0 0 188.5 188.5">
+            <g transform="matrix(1.0078 0 0 1.0078 -67.214 19.407)">
+                <g transform="rotate(-44.747 67.792 141.16)">
+                    <g transform="translate(-1.9531 .90047)">
+                        <g fill="#d9d9d9" stroke="#000" stroke-miterlimit="3.6" stroke-width=".99224">
+                            <path d="m126.03 198.46-13.395 13.514 14.107 13.983 13.551-13.359-0.15586-0.1545z"></path>
+                            <path d="m179.72 113.2-9.5454-16.807c15.849-12.25 38.167-18.086 54.984-11.963 16.38 6.2058 27.912 16.859 32.949 33.472 6.8992 24.848-2.8114 47.987-23.443 56.835-16.125 6.1073-38.406 4.3221-53.649 4.8434-7.6278 0.57408-15.568 8.2142-21.946 14.502l-14.479-14.351c9.3886-10.177 15.831-15.35 23.614-17.496 12.057-3.7812 43.583 8.2984 64.649-10.765 22.135-25.736-3.3904-55.211-28.089-49.516-9.4496 2.9276-17.309 7.0568-25.046 11.246z"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </symbol>
+    <symbol id="icon_cross" viewBox="0 0 109.6 128.65">
+        <path d="m36.406 64.314-31.762-39.345c-13.398-17.293 8.8801-33.988 22.192-17.921l27.913 34.459 27.964-34.459c14.42-16.668 35.339 1.7535 22.192 17.921l-31.823 39.372 31.927 39.51c13.13 16.071-8.3859 34.13-22.192 17.921l-28.042-34.782-28.042 34.782c-12.596 15.707-35.542-0.53837-22.192-17.921z"
+              fill="#fffefe" stroke="#000" stroke-miterlimit="3.6"></path>
+    </symbol>
+    <symbol id="icon_guest" viewBox="0 0 200 200">
+        <g transform="matrix(1.0078 0 0 1.0078 -67.214 19.407)">
+            <g transform="rotate(-44.747 67.792 141.16)">
+                <rect transform="rotate(44.747)" x="146.42" y="-107.89" width="198.45" height="198.45"
+                      fill="#211e1e"></rect>
+                <circle transform="rotate(44.747)" cx="245.65" cy="-47.739" r="29.979" fill="none" stroke="#fff"
+                        stroke-linejoin="round" stroke-miterlimit="3" stroke-width="1.9845"></circle>
+                <g transform="matrix(.74724 1.0974e-8 -1.0974e-8 .74724 -145.82 -59.571)"></g>
+                <path d="m40.681 167.84c37.868-30.716 95.332-29.301 131.84 7.0474 35.809 36.06 39.371 92.629 8.0728 131.64z"
+                      fill="none" stroke="#fff" stroke-linejoin="round" stroke-miterlimit="3"
+                      stroke-width="1.9845"></path>
+            </g>
+        </g>
+    </symbol>
+    <symbol id="icon_in-yan" viewBox="0 0 180 180">
+        <circle cx="90" cy="90" r="90"></circle>
+        <g transform="translate(-.001055 1.552)" stroke-linejoin="round" stroke-miterlimit="3" stroke-width="1.6938">
+            <path d="m89.997 108.75a17.961 17.961 0 0 0-17.961 17.961 17.961 17.961 0 0 0 17.961 17.961 17.961 17.961 0 0 0 17.961-17.961 17.961 17.961 0 0 0-17.961-17.961z"></path>
+            <path d="m90 12.229a76.219 76.219 0 0 0-76.22 76.22 76.219 76.219 0 0 0 70.805 75.793c-17.174-2.4516-31.638-16.513-31.348-37.57 0.57326-18.463 14.729-34.574 34.413-36.906 28.614-1.7957 38.956-15.3 41.327-39.589 1.3463-18.405-10.895-30.431-23.411-36.322a76.219 76.219 0 0 0-15.566-1.6252zm-3e-3 19.985a17.961 17.961 0 0 1 17.961 17.961 17.961 17.961 0 0 1-17.961 17.961 17.961 17.961 0 0 1-17.961-17.961 17.961 17.961 0 0 1 17.961-17.961z"></path>
+            <path d="m105.57 13.854c12.516 5.8914 24.757 17.917 23.411 36.322-2.371 24.289-12.713 37.794-41.327 39.589-19.684 2.332-33.84 18.443-34.413 36.906-0.28991 21.057 14.174 35.118 31.348 37.57a76.219 76.219 0 0 0 5.3232 0.4191c0.0297 4e-5 0.0587 4e-3 0.0884 4e-3v3e-3a76.219 76.219 0 0 0 3e-3 0 76.219 76.219 0 0 0 11.308-0.88987c0.42802-0.0636 0.85328-0.13771 1.2795-0.20826a76.219 76.219 0 0 0 32.017-13.339c0.10638-0.0774 0.21539-0.14992 0.32143-0.22789a76.219 76.219 0 0 0 8.5855-7.3324c0.36439-0.36249 0.70756-0.75592 1.0661-1.1271a76.219 76.219 0 0 0 6.336-7.4182c0.46009-0.61116 0.90819-1.2372 1.3544-1.866a76.219 76.219 0 0 0 4.8214-7.8672c3.0956-6.284 5.3737-12.463 6.8621-18.485a76.219 76.219 0 0 0 0.20619-0.8599c0.56336-2.3892 0.98023-4.7465 1.3121-7.0838a76.219 76.219 0 0 0 0.74879-9.5147 76.219 76.219 0 0 0-10.459-38.497c-0.3555-0.59177-0.7024-1.1899-1.0728-1.7704a76.219 76.219 0 0 0-0.36639-0.57361c-7.5781-11.648-18.119-20.944-29.695-27.033a76.219 76.219 0 0 0-19.06-6.7205zm-15.569 94.9a17.961 17.961 0 0 1 17.961 17.961 17.961 17.961 0 0 1-17.961 17.961 17.961 17.961 0 0 1-17.961-17.961 17.961 17.961 0 0 1 17.961-17.961z"
+                  fill="#fff"></path>
+            <path d="m89.997 32.214a17.961 17.961 0 0 0-17.961 17.961 17.961 17.961 0 0 0 17.961 17.961 17.961 17.961 0 0 0 17.961-17.961 17.961 17.961 0 0 0-17.961-17.961z"
+                  fill="#fff"></path>
+        </g>
+    </symbol>
+    <symbol id="icon_arrow_bottom" viewBox="0 0 211.21 139.3">
+        <g transform="matrix(1 0 0 -1 1.2078 139.3)">
+            <path d="m27.816 139h-28.419l105-138.5 105 138.5h-28.419l-76.58-105.44z" fill-opacity=".5546"
+                  stroke="#252525" stroke-miterlimit="3.6" stroke-width=".6" fill="#ffffff"></path>
+        </g>
+    </symbol>
+    <svg id="icon_arrow" viewBox="0 0 211.21 139.3">
+        <g transform="translate(1.2078)">
+            <path d="m27.816 139h-28.419l105-138.5 105 138.5h-28.419l-76.58-105.44z" fill-opacity=".5546"
+                  stroke="#252525" stroke-miterlimit="3.6" stroke-width=".6" fill="#ffffff"></path>
+        </g>
+    </svg>
+</svg>
+<div class="header">
+    <div class="header__logo">
+        <a href="{% url 'home' %}" class="header__item mouse-aiming">Rules</a>
+        </div>
+        <ul class="header__list">
+            {% if request.user.is_authenticated %}
+                <li class="mouse-aiming"><a href="{% url 'profile' user_id %}" class="header__item">Profile</a></li>
+                <li class="mouse-aiming"><a href="{% url 'discussions' %}" class="header__item">Discussions</a></li>
+                <li class="mouse-aiming"><a href="{% url 'logout' %}" class="header__item">Log out</a></li>
+            {% else %}
+                <li class="mouse-aiming"><a href="{% url 'discussions' %}" class="header__item">Discussions</a></li>
+                <li class="mouse-aiming"><a href="{% url 'login' %}" class="header__item">Login</a></li>
+            {% endif %}
+        </ul>
+        <div class="header__for-user">
+            <input id="search__toggle" type="checkbox">
+            <label for="search__toggle" class="header__search">
+                <svg class="svg__lupa">
+                    <use xlink:href="#icon_lupa"></use>
+                </svg>
+            </label>
+            <div class="search__container">
+                <div class="input__container">
+                    <form class="search__form" autocomplete="off">
+                        <input class="search__form__input" type="text" placeholder="search...">
+                    </form>
+                    <svg class="header__svg-cross">
+                        <use xlink:href="#icon_cross"></use>
+                    </svg>
+                </div>
+                <div class="search__subject__split">
+                    <ul class="search__subject">
+                        <li class="subject__item" id="discussions_search">discussions</li>
+                        <li class="subject__item" id="users_search">users</li>
+                    </ul>
+                </div>
+                <div class="search__results">
+                    <div class="search__result_empty">nothing founded</div>
+                </div>
+            </div>
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'profile' user_id %}" class="user__icon">
+            {% else %}
+            <a href="{% url 'registration' %}" class="user__icon">
+            {% endif %}
+                <svg class="svg__user">
+                    <use xlink:href="#icon_guest"></use>
+                </svg>
+            </a>
+            <input id="theme__toggle" type="checkbox">
+            <label for="theme__toggle" class="theme__button">
+                <svg class="svg__in-yan">
+                    <use xlink:href="#icon_in-yan"></use>
+                </svg>
+            </label>
+        </div>
+        <div class="header__sliding__menu">
+            <input id="menu__toggle" type="checkbox">
+            <label for="menu__toggle" class="menu__button">
+                <span class="menu__bar"></span>
+                <span class="menu__bar"></span>
+                <span class="menu__bar"></span>
+            </label>
+            <div class="dropdown">
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'home' %}">rules</a>
+                <a href="{% url 'profile' user_id %}">profile</a>
+                <a href="{% url 'discussions' %}">discussions</a>
+                <a href="{% url 'logout' %}">log out</a>
+            {% else %}
+                <a href="{% url 'home' %}">rules</a>
+                <a href="{% url 'discussions' %}">discussions</a>
+                <a href="{% url 'login' %}">log in</a>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% block content %}{% endblock content %}
+{% block additional_js %}{% endblock additional_js %}
+</body>
+</html>

@@ -1,0 +1,182 @@
+
+
+.core__section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+
+.content__discussion{
+    min-height: 600px;
+    width: 80%;
+    background: #332f2f;
+    border-radius: 5px 5px 5px 5px;
+    margin: 40px 0 40px 0;
+    padding-bottom: 20px;
+}
+.discussion__info{
+    border: 2px solid #cacaca;
+    border-radius: 8px;
+    margin: 25px;
+    padding: 15px;
+}
+.discussion__header{
+    display: flex;
+    justify-content: space-between;
+}
+.discussion__creation_date{
+    color: #dbdbdb;
+}
+.discussion__author {
+    text-decoration: none;
+    color: #f94040;
+}
+.discussion__theme {
+    display: block;
+    text-decoration: none;
+    color: #cacaca;
+    font-size: 20px;
+    margin: 10px 0 10px 10px;
+}
+.discussion__content{
+
+}
+
+.discussion__survey__theme {
+    display: flex;
+    justify-content: center;
+    color: #cacaca;
+}
+.discussion__survey__bars{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: flex-end;
+    width: 200px;
+}
+.discussion__survey__column{
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+}
+.discussion__survey__row{
+    display: flex;
+    justify-content: flex-end;
+}
+.discussion__survey{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.survey__item{
+    display: flex;
+}
+.survey__item__input{
+
+}
+.survey__item__text{
+
+}
+.survey__bar {
+    height: 1em;
+    max-width: 200px;
+    width: 100%;
+    background: #ffffff2b;
+    border: 2px solid #000000a5;
+    position: relative;
+}
+.survey__bar__progress {
+    max-width: 100%;
+    height: 100%;
+    width: 30%;
+    background: #af925b;
+    border-left: 1px solid #000000a5;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.survey__bar__weight {
+    display: flex;
+    color: #cacaca;
+}
+.survey__results{
+    margin: 0 10px 0 10px;
+}
+.discussion__survey__results{
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 30px 0 0;
+    
+}
+.survey__check__results{
+    font-size: 0.9em;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.preview-tags {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.preview-tag {
+    display: block;
+    padding: 2px 6px 2px 6px;
+    margin: 10px 10px 0 0;
+    border-radius: 10px 10px 10px 10px;
+    border: 2px solid #000000;
+    background: #32d020;
+    font-family: 'Comic Sans MS';
+    font-size: 14px;
+}
+
+
+.hedge{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.hedge__first-line{
+    background: #ffffff;
+    width: 100%;
+    height: 1px;
+}
+.hedge__second-line{
+    background: #ffffff;
+    width: 80%;
+    height: 1px;
+    margin-top: 10px;
+}
+
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 30px;
+    padding: 0 20px 20px 20px;
+    color: #dbdbdb;
+}
+
+
+@media (max-width: 768px){
+    .content__discussion{
+        width: 90%;
+    }
+    .discussion__theme{
+        font-size: 1em;
+    }
+    .preview-tag {
+        padding: 1.5px 3px 1.5px 3px;
+        margin: 7px 7px 0 0;
+        border-radius: 8px;
+    }
+}
+@media (max-width: 425px){
+    .content__discussion{
+        width: 97%;
+        margin: 25px 0 25px 0;
+    }
+}

@@ -1,0 +1,79 @@
+{% extends 'forum/base_profile.html' %}
+
+{% load static %}
+{% block extra_js %}
+    <script src="{% static '/forum/js/friends.js' %}"></script>
+    <script src="{% static 'forum/js/profile_friends_ajax.js' %}"></script>
+{% endblock %}
+{% block extra_header %}
+    <a href="{% url 'profile' user.pk %}" class="mouse-aiming second-header__item">Comments</a>
+    <a href="{% url 'profile_contribution' user.pk %}" class="mouse-aiming second-header__item">Contribution</a>
+    <a href="{% url 'profile_friends' user.pk %}" class="mouse-aiming second-header__item current__item">Friends</a>
+    {% if request.user.is_authenticated and user.id == user_id %}
+        <a href="{% url 'profile_events' user.pk %}" class="mouse-aiming second-header__item">Events</a>
+        <a href="{% url 'profile_bans' user.pk %}" class="mouse-aiming second-header__item">Bans</a>
+    {% endif %}
+{% endblock %}
+
+{% block extra_content %}
+{% if friends %}
+<div class="friend__list">
+    {% for friend in friends %}
+        <div class="content-field__friend" id="{{ friend.pk }}">
+            {% if not friend.avatar|default_if_none:"nothing"  %}
+                <img src="{% static 'forum/default_avatar/avatar.png' %}" alt="wrong" class="friend__avatar">
+            {% else %}
+                <img src="{{ friend.avatar.url }}" alt="wrong" class="friend__avatar">
+            {% endif %}
+            <div class="friend__column-info">
+                <a href="{{ friend.get_absolute_url }}" class="friend__nickname">{{ friend.username }}</a>
+                {% if request.user.is_authenticated and user.id == user_id %}
+                    <div class="friend__actions__visible">
+                        <div class="friend__remove">remove</div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+    <div class="delete_friend_field">
+        <div class="delete_friend_form">
+            <div class="delete_header">really?</div>
+            <div class="hedge">
+                <div class="hedge_remove_friend_top_line"></div>
+                <div class="hedge__second-line"></div>
+            </div>
+            <div class="delete_choices">
+                <div class="delete_joke">nope</div>
+                <div class="delete_kick_off">yes</div>
+            </div>
+            <div class="hedge">
+                <div class="hedge_remove_friend_top_line"></div>
+            </div>
+        </div>
+    </div>
+    {% if friends.has_other_pages %}
+        <div class="pagination__profile">
+            {% if bans.has_previous %}
+                <a href="?page={{ friends.previous_page_number }}" class="pagination__link link__clickable"><</a>
+            {% else %}
+                <a class="pagination__link link__unclickable"><</a>
+            {% endif %}
+            {% for p in friends.paginator.page_range %}
+                {% if friends.number == p %}
+                    <a href="?page={{ p }}" class="pagination__link link-selected">{{ p }}</a>
+                {% elif p >= friends.number|add:-3 and p <= friends.number|add:3 %}
+                    <a href="?page={{ p }}" class="pagination__link">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if friends.has_next %}
+                <a href="?page={{ friends.next_page_number }}" class="pagination__link link__clickable">></a>
+            {% else %}
+                <a class="pagination__link link__unclickable">></a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% else %}
+<div class="invisible_user">you don't have any friends here yet<div>
+{% endif %}
+{% endblock %}

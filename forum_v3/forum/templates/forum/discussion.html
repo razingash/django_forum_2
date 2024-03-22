@@ -1,0 +1,196 @@
+{% extends 'forum/base.html' %}
+
+{% load static %}
+{% load forum_tags %}
+
+{% block additional_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/discussion.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/comments_normal.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/pagination.css' %}">
+    <meta name="discussion-id" content="{{ discussion.id }}">
+    {% if request.user.is_authenticated %}
+        <meta name="user-id" content="{{ user.id }}">{% endif %}
+{% endblock %}
+
+{% block additional_js %}
+    <script src="{% static 'forum/js/comments.js' %}"></script>
+    {% if request.user.is_authenticated %}
+    <script src="{% static 'forum/js/comments_ajax.js' %}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="core__section">
+        <div class="content__discussion">
+            <div class="discussion__info">
+                <div class="discussion__header">
+                    <div class="discussion__creation_date">{{ discussion.creation_date|date:"d.m.Y" }}</div>
+                    <a href="{% url 'profile' discussion.creator.pk %}"
+                       class="discussion__author">{{ discussion.creator.username }}</a>
+                </div>
+                <div class="discussion__theme">{{ discussion.theme }}</div>
+                <div class="discussion__content" id="1">{{ discussion.content }}</div>
+                <div class="preview-tags">
+                    {% discussion_tags discussion.discussiontags_set.all as discussion_categories %}
+                    {% for key, value in discussion_categories.items %}
+                        <div class="preview-tag">{{ key }} {{ value }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="hedge">
+                <span class="hedge__first-line"></span>
+                <span class="hedge__second-line"></span>
+            </div>
+
+            <div>
+                <div class="complaint__field">
+                    <div class="complaint__form">
+                        <div class="reported__user" id="">user</div>
+                        <div class="hedge">
+                            <span class="hedge_complaint__top_line"></span>
+                            <span class="hedge_complaint__bottom_line"></span>
+                        </div>
+                        <div class="report__reasons">
+                            <div class="report__reason">
+                                <input type="checkbox" id="item1" class="checkbox__reason">
+                                <label for="item1">reason 1</label>
+                            </div>
+                            <div class="report__reason">
+                                <input type="checkbox" id="item2" class="checkbox__reason">
+                                <label for="item2">reason 2</label>
+                            </div>
+                            <div class="report__reason">
+                                <input type="checkbox" id="item3" class="checkbox__reason">
+                                <label for="item3">reason 3</label>
+                            </div>
+                            <div class="report__reason">
+                                <input type="checkbox" id="item4" class="checkbox__reason">
+                                <label for="item4">reason 4</label>
+                            </div>
+                            <div class="report__reason">
+                                <input type="checkbox" id="item5" class="checkbox__reason">
+                                <label for="item5">reason 5</label>
+                            </div>
+                        </div>
+                        <div class="hedge">
+                            <span class="hedge_complaint__bottom_line"></span>
+                            <span class="hedge_complaint__top_line"></span>
+                        </div>
+                        <div class="complaint__footer">
+                            <div class="complaint__close">close</div>
+                            <div class="complaint__submit">report</div>
+                        </div>
+                    </div>
+                </div>
+
+                {% for comment in comments %}
+                <div class="comments__field">
+                    <div class="comment__field" id="{{ comment.pk }}">
+                        <div class="comment__core">
+                            {% if not comment.comment.author.avatar %}
+                                <img src="{% static 'forum/default_avatar/avatar.png' %}" alt="wrong" class="comment__avatar">
+                            {% else %}
+                                <img src="{{ comment.comment.author.avatar.url }}" alt="wrong" class="comment__avatar">
+                            {% endif %}
+                            <div class="comment__info">
+                                <div class="comment__metadata">
+                                    <a href="#" class="comment__nickname">{{ comment.comment.author.username }}</a>
+                                    <div class="preview-upload_date">{{ comment.comment.upload_date|date:"d.m.Y H:i" }}</div>
+                                </div>
+                                <div class="comment_reply">
+                                    <a href="#" class="comment__nickname">{{ comment.comment.parent_comment.author.username }}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comment">{{ comment.comment.comment }}</div>
+                        <div class="comment__footer{% if not request.user.is_authenticated %} user__unlogged{% endif %}">
+                            {% if comment.comment.author_id == user_id %}
+                            <input id="comment__reply__toggle_{{ comment.pk }}" type="checkbox" class="write_checkbox edit__checkbox">
+                            <label for="comment__reply__toggle_{{ comment.pk }}" class="label__reply_movements">
+                                <div class="comment__editing">edit</div>
+                            </label>
+                            {% elif request.user.is_authenticated %}
+                            <input id="comment__reply__toggle_{{ comment.pk }}" type="checkbox" class="write_checkbox">
+                            <label for="comment__reply__toggle_{{ comment.pk }}" class="label__reply_movements">
+                                <div class="comment__reply">reply</div>
+                            </label>
+                            {% endif %}
+                            {% if request.user.is_authenticated %}
+                            <label class="comment__movements">
+                                <input type="checkbox" class="movements_checkbox">
+                                <div>...</div>
+                                <div class="movements__menu">
+                                    {% if comment.comment.author_id == user_id %}
+                                        <div class="movement__annihilate">delete</div>
+                                    {% elif request.user.is_authenticated %}
+                                        <div class="movement__complaint">report</div>
+                                    {% endif %}
+                                </div>
+                            </label>
+                            {% endif %}
+                            <div class="grade_fluctuations">
+                                <svg class="grade_up">
+                                    <use xlink:href="#icon_arrow"></use>
+                                </svg>
+                                {% if comment.comment.rating == 0 %}
+                                    <div class="preview-rating grade-standard">{{ comment.comment.rating }}</div>
+                                {% elif comment.comment.rating > 0 %}
+                                    <div class="preview-rating grade-positive">{{ comment.comment.rating }}</div>
+                                {% else %}
+                                    <div class="preview-rating grade-negative">{{ comment.comment.rating }}</div>
+                                {% endif %}
+                                <svg class="grade_down">
+                                    <use xlink:href="#icon_arrow_bottom"></use>
+                                </svg>
+                            </div>
+                            {% if comment.comment.author_id == user_id %}
+                                <form class="editing__field" method="post">
+                                    {% csrf_token %}
+                                    <textarea class="editing__textarea"></textarea>
+                                    <input type="submit" value="save" class="editing__text_input">
+                                </form>
+                            {% else %}
+                                <form class="editing__field">
+                                    {% csrf_token %}
+                                    <textarea placeholder="reply..." class="reply__textarea"></textarea>
+                                    <input type="submit" value="save" class="reply__text_input">
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="new_comment__conatiner">
+                    <form class="new_comment__field">
+                        {% csrf_token %}
+                        <textarea class="editing__textarea" placeholder="new comment..."></textarea>
+                        <input type="submit" value="save" class="new_comment__text_input">
+                    </form>
+                </div>
+                {% if comments.has_other_pages %}
+                    <div class="pagination__discussion">
+                        {% if comments.has_previous %}
+                            <a href="?page={{ comments.previous_page_number }}" class="pagination__link link__clickable"><</a>
+                        {% else %}
+                            <a class="pagination__link link__unclickable"><</a>
+                        {% endif %}
+                        {% for p in comments.paginator.page_range %}
+                            {% if comments.number == p %}
+                                <a href="?page={{ p }}" class="pagination__link link-selected">{{ p }}</a>
+                            {% elif p >= comments.number|add:-3 and p <= comments.number|add:3 %}
+                                <a href="?page={{ p }}" class="pagination__link">{{ p }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        {% if comments.has_next %}
+                            <a href="?page={{ comments.next_page_number }}" class="pagination__link link__clickable">></a>
+                        {% else %}
+                            <a class="pagination__link link__unclickable">></a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

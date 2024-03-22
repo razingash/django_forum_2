@@ -1,0 +1,43 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --background: #211e1e;
+    --header-bg: #4f4b4b;
+    --theme-color-discussion: #000000;
+    --content-fields-bg: #585353;
+    --search-field-bg: #332f2f;
+    --advanced-search-bg: #332f2f;
+}
+
+html[data-mode=dark] {
+    --background: #19191f;
+    --header-bg: #000000;
+    --theme-color-discussion: #ffffff;
+    --content-fields-bg: #252d45;
+    --search-field-bg: #252d45;
+    --advanced-search-bg: #252d45;
+}
+
+body {
+    background: var(--background);
+    /*background: linear-gradient(45deg, #211e1e, #272424);*/
+    margin: 0;
+}
+
+.svg__list {
+    position: absolute;
+    visibility: hidden;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+}
+
+
+
+
+
+

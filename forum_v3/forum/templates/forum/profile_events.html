@@ -1,0 +1,101 @@
+{% extends 'forum/base_profile.html' %}
+
+{% load static %}
+{% block extra_header %}
+    <a href="{% url 'profile' user.pk %}" class="mouse-aiming second-header__item">Comments</a>
+    <a href="{% url 'profile_contribution' user.pk %}" class="mouse-aiming second-header__item">Contribution</a>
+    <a href="{% url 'profile_friends' user.pk %}" class="mouse-aiming second-header__item">Friends</a>
+    {% if request.user.is_authenticated and user.id == user_id %}
+        <a href="{% url 'profile_events' user.pk %}" class="mouse-aiming second-header__item current__item">Events</a>
+        <a href="{% url 'profile_bans' user.pk %}" class="mouse-aiming second-header__item">Bans</a>
+    {% endif %}
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'forum/js/profile_events_ajax.js' %}"></script>
+{% endblock %}
+{% block extra_content %}
+    {% if events %}
+        {% for event in events %}
+            {% if event.event == 'friendship' %}
+                {% if event.sender__userdescription.sex == 'man' %}
+                    <div class="content-field__event event__friend-man">
+                {% elif event.sender__userdescription.sex == 'woman' %}
+                    <div class="content-field__event event__friend-man">
+                {% else %}
+        <div class="content-field__event event__friend-man">
+        {% endif %}
+            <div class="event__sender">
+                {% if not event.sender.avatar|default_if_none:"nothing"  %}
+                    <img src="{% static 'forum/default_avatar/avatar.png' %}" alt="wrong" class="event__user-avatar">
+                {% else %}
+                    <img src="{{ event.sender.avatar.url }}" alt="wrong" class="event__user-avatar">
+                {% endif %}
+                <div class="event__info">
+                    <div class="event__header">
+                        <a href="{% url 'profile' event.sender.id %}" class="event__user-nickname">{{ event.sender.username }}</a>
+                        <div class="event__request">Friendship request</div>
+                    </div>
+                    <div class="event__message">
+                        <div class="event__content__static">{{ event.sender.username }} wants to be friends with you</div>
+                    </div>
+                </div>
+            </div>
+            <div class="event__duration">
+                <div>since 11:20 16.12.2023</div>
+                <div class="event__choice">
+                    <div class="event__choose-reject" data-user-id="{{ event.sender.id }}">reject</div>
+                    <div class="event__choose-accept" data-user-id="{{ event.sender.id }}">accept</div>
+                </div>
+                <div>to 11:20 20.12.2023</div>
+            </div>
+        </div>
+    {% elif event.event == 'reply' %}
+        <div class="content-field__event event__reply">
+            <div class="event__sender">
+                {% if not event.sender.avatar|default_if_none:"nothing"  %}
+                    <img src="{% static 'forum/default_avatar/avatar.png' %}" alt="wrong" class="event__user-avatar">
+                {% else %}
+                    <img src="{{ event.sender.avatar.url }}" alt="wrong" class="event__user-avatar">
+                {% endif %}
+                <div class="event__info">
+                    <div class="event__header">
+                        <a href="{% url 'profile' event.sender.id %}" class="event__user-nickname">{{ event.sender.username }}</a>
+                        <div class="event__request">Reply request</div>
+                    </div>
+                    <div class="event__message">
+                        <div class="event__content__static">{{ event.sender.username }} replied to your comment</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% elif event.event == 'admin notification' %}
+        <div class="content-field__certificate">
+            <div class="certificate__theme">NOTIFICATION</div>
+            <div class="certificate__content">tommorow you will be banned</div>
+        </div>
+    {% endif %}
+{% endfor %}
+    {% if events.has_other_pages %}<div class="pagination__profile">
+        {% if events.has_previous %}
+            <a href="?page={{ events.previous_page_number }}" class="pagination__link link__clickable"><</a>
+        {% else %}
+            <a class="pagination__link link__unclickable"><</a>
+        {% endif %}
+        {% for p in events.paginator.page_range %}
+            {% if events.number == p %}
+                <a href="?page={{ p }}" class="pagination__link link-selected">{{ p }}</a>
+            {% elif p >= events.number|add:-3 and p <= events.number|add:3 %}
+                <a href="?page={{ p }}" class="pagination__link">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if events.has_next %}
+            <a href="?page={{ events.next_page_number }}" class="pagination__link link__clickable">></a>
+        {% else %}
+            <a class="pagination__link link__unclickable">></a>
+        {% endif %}
+    </div>
+    {% endif %}
+{% else %}
+<div class="invisible_user">you haven't received any notifications yet<div>
+{% endif %}
+{% endblock %}

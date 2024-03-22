@@ -1,0 +1,149 @@
+
+.section__form__reglog{
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    justify-content: center;
+}
+
+.containter__form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #332f2f;
+    border-radius: 0 5px 5px 5px;
+    width: 30%;
+    min-height: 300px;
+    position: absolute;
+}
+
+.container__header{
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: -31px;
+    left: 0;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.header__item{
+    background: #332f2f;
+    border-bottom: 1px solid #000000;
+    padding: 6px 20px 6px 20px;
+    border-radius: 15px 15px 0 0;
+    text-decoration: none;
+    color: #000000;
+}
+
+.form__row{
+    display: flex;
+    /*flex-direction: column;*/
+    margin: 10px 0 10px 0;
+}
+.form__field{
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.login__field{
+    padding: 30px;
+    width: 80%;
+}
+
+.form__login, .form__registration{
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+
+
+.input__mail, .input__password, .input__nickname{
+    border: 2px solid #ffffff7a;
+    border-radius: 3px 3px 3px 3px;
+    color: #ffffff;
+    background: #0000009c;
+}
+/*
+color: white;
+    background: transparent;
+    border: 2px solid #ffffff38;
+    border-radius: 3px;
+    margin-left: 10px;
+ */
+
+.form__login > .input__mail{
+    margin-bottom: 30px;
+}
+
+.form__registration > input{
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+
+
+
+
+
+@media (max-width: 576px){
+	.containter__form {
+	    width: 95%;
+	}
+
+    .input__password, .input__mail{
+        font-size: 14px;
+    }
+}
+
+
+@media (min-width: 576px){
+	.containter__form {
+	    width: 65%;
+	}
+
+    .input__password, .input__mail{
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 768px){
+	.containter__form {
+	    width: 50%;
+	}
+
+    .input__password, .input__mail{
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 1024px){
+	.containter__form {
+	    width: 40%;
+	}
+
+    .input__password, .input__mail{
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 1200px){
+	.containter__form {
+	    width: 30%;
+	}
+
+    .input__password, .input__mail{
+        font-size: 14px;
+    }
+}
+
+@media(min-width: 1500px){
+    .containter__form {
+	    width: 30%;
+	}
+
+    .input__password, .input__mail{
+        font-size: 15px;
+    }
+}

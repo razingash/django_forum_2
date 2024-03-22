@@ -1,0 +1,133 @@
+
+.core__section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.form__container{
+    display: flex;
+    flex-direction: column;
+}
+
+.content__settings_menu{
+    display: flex;
+    justify-content: space-around;
+    background: #332f2f;
+    border-radius: 5px 5px 5px 5px;
+    margin-top: 25px;
+    padding: 10px;
+
+}
+.settings_menu__item{
+    text-decoration: none;
+}
+
+.content__form {
+    background: #332f2f;
+    border-radius: 5px 5px 5px 5px;
+    margin: 40px 0 40px 0;
+    padding: 20px;
+    min-width: 586px;
+}
+
+.settings_menu__item:hover {
+    background: #f5deb3;
+    color: #000000 !important;
+}
+.settings_menu__item {
+    display: flex;
+    color: #f5deb3;
+    padding: 0 10px 0 10px;
+    cursor: pointer;
+    text-decoration: none;
+}
+.current__item{
+    color: #ffb427 !important;
+}
+
+.form__post{
+
+}
+
+.form__row{
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0 10px 0;
+}
+.form__field{
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+.form__field__column{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+    margin: 5px;
+}
+
+
+.form_textarea {
+    background: transparent;
+    border: 2px solid #ffffff38;
+    padding: 5px;
+    margin-left: 10px;
+    resize: none;
+}
+.form_input{
+    background: transparent;
+    border: 2px solid #ffffff38;
+    padding: 3px;
+    margin-left: 10px;
+}
+.form_file{
+    margin-left: 10px;
+}
+.form-label, .specialization{
+    color: #ffffff;
+}
+.tags__header{
+    color: #ffffff;
+    margin-bottom: 5px;
+}
+.tags_list{
+    color: #dbdbdb;
+}
+
+.form_checkbox-list{
+    flex-grow: 1;
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 12px;
+    padding-top: 10px;
+}
+
+.submit_form{
+    float: right;
+    padding: 3px 16px 3px 16px;
+    margin: 0 10px 0 10px;
+    border: none;
+    border-radius: 6px;
+    background: linear-gradient(to top, #cdcdcd59, #ffffff6b);
+}
+
+.invisible{
+    display: none;
+}
+.form_checkbox-list{
+  display: none;
+}
+.invisible:checked ~ .form_checkbox-list{
+  display: inline-grid;
+}
+@media (max-width: 768px){
+    .content__settings {
+        width: 90%;
+        padding: 10px;
+        min-width: 0;
+    }
+}
+

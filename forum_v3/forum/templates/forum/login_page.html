@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/critical.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/auth_beta.css' %}">
+</head>
+<body>
+    <div class="section__form__reglog">
+        <div class="containter__form">
+            <div class="container__header">
+                <a href="{% url 'registration' %}" class="header__item">register</a>
+            </div>
+            <form class="form__login" method="post">
+                {% csrf_token %}
+                {% for f in form %}
+                    <div class="form__row">
+                        <label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
+                        <div class="form-errors">{{ f.errors }}</div>
+                    </div>
+                {% endfor %}
+                <div class="from-error">{{ form.non_field_errors }}</div>
+                <button type="submit">log in</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

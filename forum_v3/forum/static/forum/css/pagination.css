@@ -1,0 +1,50 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 30px;
+    color: #dbdbdb;
+}
+.pagination__profile{
+    display: flex;
+    justify-content: center;
+    margin: 15px 10px -15px 10px;
+    padding: 0 20px 0 20px;
+    color: rgb(219, 219, 219);
+}
+.pagination__discussion{
+    display: flex;
+    justify-content: center;
+    margin: 0 30px 30px 30px;
+    color: #dbdbdb;
+}
+.pagination__link{
+    text-decoration: none;
+    color: #dbdbdb;
+    padding: 0 10px 0 10px;
+    margin: 0 5px 0 5px;
+    border: 1px solid #dbdbdb;
+    border-radius: 10px;
+}
+.link__unclickable{
+    pointer-events: none;
+    color: #000000;
+    border: 2px solid;
+    box-shadow: 0 0 5px 1px;
+}
+.link__clickable{
+    color: #ffffff;
+    border: 2px solid;
+    box-shadow: 0 0 5px 1px;
+}
+.link-selected{
+    color: #038d03;
+    border: 2px solid;
+    box-shadow: 0 0 10px 5px;
+    background: #332f2f;
+    pointer-events: none;
+}
+@media (max-width: 768px) {
+    .pagination{
+        margin: 15px;
+    }
+}

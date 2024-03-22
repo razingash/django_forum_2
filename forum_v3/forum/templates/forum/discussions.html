@@ -1,0 +1,169 @@
+{% extends 'forum/base.html' %}
+
+{% load static %}
+{% load forum_tags %}
+
+{% block additional_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/advanced_search.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/dda_search_discussions.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/pagination.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    {% if request.user.is_authenticated %}
+        <meta name="user-id" content="{{ user.id }}">{% endif %}
+{% endblock %}
+
+{% block additional_js %}
+    <script src="{% static 'forum/js/advanced_search.js' %}"></script>
+    {% if request.user.is_authenticated %}
+        <script src="{% static 'forum/js/advanced_search_ajax.js' %}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="advanced_search__container">
+        <div class="search__container__header">
+            <div class="advanced_search" id="advanced_search_button_1">Advanced search</div>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'new_discussion' %}" class="new_discussion">create discussion</a>
+            {% endif %}
+            <form class="advanced_search__form">
+            <input type="text" placeholder="Search here..." class="search__input">
+        </form>
+        <div class="search__form__results">
+            <a href="#" class="search__form__result">theme 1</a>
+            <a href="#" class="search__form__result">theme 2</a>
+            <a href="#" class="search__form__result">theme 3</a>
+            <a href="#" class="search__form__result">theme 4</a>
+            <a href="#" class="search__form__result">theme 5</a>
+        </div>
+    </div>
+</div>
+    <div class="content-field">
+        <div class="universal-search-field custom__search__field">
+            {% for discussion in discussions %}
+                <div class="preview custom__preview" id="{{ discussion.pk }}">
+                    <div class="preview-header">
+                        <div class="preview-upload_date">{{ discussion.creation_date|date:"d.m.Y H:i" }}</div>
+                        <div class="preview-visitors">
+                            <svg class="svg__visitors">
+                                <use xlink:href="#icon_visitors"></use>
+                            </svg>
+                            <div class="visitors__amount">?</div>
+                        </div>
+                    </div>
+                    <a href="{{ discussion.get_absolute_url }}"
+                       class="preview-theme custom__theme">{{ discussion.theme }}</a>
+                    <input type="checkbox" id="preview-tags_hidden_{{ discussion.id }}" class="hidden_checkbox">
+
+                    <div class="preview-tags">
+                        {% discussion_tags discussion.discussiontags_set.all as discussion_categories %}
+                        {% for key, value in discussion_categories.items %}
+                            <div class="preview-tag">{{ key }} {{ value }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="preview-footer">
+                        <div class="grade_fluctuations">
+                            <svg class="grade_up">
+                                <use xlink:href="#icon_arrow"></use>
+                            </svg>
+                            {% if discussion.rating == 0 %}
+                                <div class="preview-rating grade-standard">{{ discussion.rating }}</div>
+                            {% elif discussion.rating > 0 %}
+                                <div class="preview-rating grade-positive">{{ discussion.rating }}</div>
+                            {% else %}
+                                <div class="preview-rating grade-negative">{{ discussion.rating }}</div>
+                            {% endif %}
+                            <svg class="grade_down">
+                                <use xlink:href="#icon_arrow_bottom"></use>
+                            </svg>
+                        </div>
+                        <label for="preview-tags_hidden_{{ discussion.id }}"
+                               class="check_tags custom__check">...</label>
+                        <a href="{{ discussion.get_absolute_url }}" class="preview-check custom__check">read...</a>
+                    </div>
+                </div>
+            {% endfor %}
+            {% if page_obj.has_other_pages %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}"
+                           class="pagination__link link__clickable"><</a>
+                    {% else %}
+                        <a class="pagination__link link__unclickable"><</a>
+                    {% endif %}
+                    {% for p in page_obj.paginator.page_range %}
+                        {% if page_obj.number == p %}
+                            <a href="?{{ request.GET.urlencode }}&page={{ p }}"
+                               class="pagination__link link-selected">{{ p }}</a>
+                        {% elif p >= page_obj.number|add:-3 and p <= page_obj.number|add:3 %}
+                            <a href="?{{ request.GET.urlencode }}&page={{ p }}" class="pagination__link">{{ p }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}"
+                           class="pagination__link link__clickable">></a>
+                    {% else %}
+                        <a class="pagination__link link__unclickable">></a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="advanced_search__field">
+            <div class="search__container__footer">
+                <div class="advanced_search__sorting">Sorted by</div>
+            <div id="advanced_search_button_2" class="advanced_search">Advanced search</div>
+        </div>
+        <div class="advanced_search__bunch">
+            <div class="hedge">
+                <span class="bunch__hedge_top"></span>
+            </div>
+            <div class="scrollable_container">
+                <div class="bunch__header">
+                    <div>Author</div>
+                    <div id="user_info__reset" class="advanced_search__reset">reset</div>
+                </div>
+                <div class="bunch__author">
+                    <div class="author__lvl">
+                        <div>level</div>
+                        <input type="text" maxlength="4" placeholder="from" id="author__lvl__minimal"
+                               class="author__lvl__input">
+                        <input type="text" maxlength="4" placeholder="to" id="author__lvl__maximal"
+                               class="author__lvl__input">
+                    </div>
+                    <div class="author__p_orientation">
+                        {% for p_orient in p_orients %}
+                            <label class="p_orientation__item">
+                                <input type="checkbox" class="p_orientation__checkbox" id="{{ p_orient.0 }}" value="0">
+                                <div class="checkbox__item"></div>
+                                <div>{{ p_orient.1 }}</div>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="bunch__header">
+                    <div>Tags</div>
+                    <div id="tags__reset" class="advanced_search__reset">reset</div>
+                </div>
+                <div class="bunch__tags">
+                    {% for tag in tags %}
+                    <label class="bunch__tag">
+                        <input type="checkbox" class="bunch__tag__checkbox" id="{{ tag.id }}" value="0">
+                        <div class="checkbox__item"></div>
+                        <div>{{ tag.name }}</div>
+                    </label>
+                {% endfor %}
+                </div>
+            </div>
+            <div class="hedge">
+                <span class="bunch__hedge_bottom"></span>
+            </div>
+            <div class="bunch__footer">
+                <div class="advanced_search__sorting" id="header__sorting">Sorted by</div>
+                <div class="bunch__cancle">cancle</div>
+                <div class="bunch__apply">apply</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

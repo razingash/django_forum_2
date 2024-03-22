@@ -1,0 +1,54 @@
+
+{% extends 'forum/base.html' %}
+
+{% load static %}
+
+{% block additional_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/start_page.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock additional_css %}
+
+{% block content %}
+    <div class="content-field">
+        <div class="title">Rules</div>
+        <div class="search-field">
+            <div class="section">
+                <div class="section__theme">Discussions</div>
+                <ul class="section__rules">
+                    <li class="section__rule">publication of material that does not correspond to the acceptable age</li>
+                </ul>
+                <div class="section__footer">
+                    <div class="section__upload_date">last update: 25.02.2024</div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="section__theme">Social</div>
+                <ul class="section__rules">
+                    <li class="section__rule">publishing links to external sites</li>
+                    <li class="section__rule">publication of destructive materials</li>
+                    <li class="section__rule">advertising(bots), spam, fraud</li>
+                    <li class="section__rule">violation of ethical basic standards</li>
+                    <li class="section__rule">support for events I don't like</li>
+                </ul>
+                <div class="section__footer">
+                    <div class="section__upload_date">last update: 25.02.2024</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content-field last-content-field">
+        <div class="title">About this site</div>
+        <div class="search-field">
+            <div class="section">
+                <div class="section__theme">Our policy</div>
+                <ul class="section__rules">
+                    <li class="section__rule">the site adheres to socialism within the framework of dictatorship</li>
+                </ul>
+                <div class="section__footer">
+                    <div class="section__upload_date">last update: 25.02.2024</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

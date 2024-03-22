@@ -1,0 +1,134 @@
+{% extends 'forum/base.html' %}
+
+{% load static %}
+{% load forum_tags %}
+{% block additional_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/profile.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'forum/css/pagination.css' %}">
+{% endblock %}
+
+{% block additional_js %}
+    <script src="{% static '/forum/js/profile.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static '/forum/js/profile_ajax.js' %}"></script>
+    {% block extra_js %}{% endblock extra_js %}
+{% endblock additional_js %}
+
+{% block content %}
+    <div class="profile">
+        <div class="profile__face">
+            {% if not user.avatar %}
+                <img src="{% static 'forum/default_avatar/avatar.png' %}" alt="wrong" class="profile__avatar">
+            {% else %}
+                <img src="{{ user.avatar.url }}" alt="wrong" class="profile__avatar">
+            {% endif %}
+            <div class="profile__info">
+                <div class="profile__nickname">{{ user.username }}</div>
+                <div class="profile__description">{{ user.credo }}</div>
+            </div>
+        </div>
+
+        <div class="profile__user__info">
+            <div class="profile__extension">
+                <div class="symbol-info">i</div>
+                <div>about user</div>
+            </div>
+            {% if request.user.is_authenticated and user.id == user_id %}
+            <a href="{% url 'base_settings' %}" class="profile__settings">
+                <div class="symbol-gear">&#x2699;</div>
+                <div>settings</div>
+            </a>
+            {% elif request.user.is_authenticated %}
+                {% is_my_friend_got_request_tag user.id user_id as possible_friend %}
+                {% if possible_friend %}
+                    {% is_my_friend_tag user.id user_id as friend %}
+                    {% if not friend %}
+                    <a href="#" class="add_friend" data-profile-id="{{ user_id }}">
+                        <div>add friend</div>
+                    </a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="profile__card">
+            <div class="card__username">
+                <div class="card__close">✖</div>
+                <div>{{ user.username }}</div>
+            </div>
+            <div class="card__fortune">
+                <div class="card__loyalty">With us since {{ user.date_joined|date:"Y-m-d" }}</div>
+                <div class="card__status">online</div>
+            </div>
+            <div class="card__content">
+                <div class="card__style">
+                    <div>Favorite art style:{{ user.userdescription.get_art_style_display }}</div>
+                    <div>Political orientation:{{ user.userdescription.get_political_orientation_display }}</div>
+                    <div>Ideology:{% if user.userdescription.ideology is not none %}{{ user.userdescription.ideology }}{% endif %}</div>
+                </div>
+                <div class="card__description">{{ user.userdescription.description }} </div>
+            </div>
+            <div class="card__footer">
+                <div class="card__lvl">{{ user.level }}</div>
+                <div class="card__pseudonym">pseudonym</div>
+                <div class="card__sex">
+                    {% if user.sex == 'man' %}
+                        <svg class="sex__symbol_man">
+                            <use xlink:href="#icon_man"></use>
+                        </svg>
+                    {% elif user.sex == 'woman' %}
+                        <svg class="sex__symbol_woman">
+                            <use xlink:href="#icon_woman"></use>
+                        </svg>
+                    {% else %}
+                        <svg class="sex__symbol_undefinded">
+                            <use xlink:href="#icon_undefinded"></use>
+                        </svg>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="real_one__list">
+        {% for spec in user.userspecializations_set.all %}
+            <div class="real_one__item item__philosophy">{{ spec.specialization.name }} {{ spec.level_of_awareness }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="hedge">
+        <span class="hedge__first-line"></span>
+        <span class="hedge__second-line"></span>
+    </div>
+
+    <div class="second-header">
+        <div class="second-header__header">
+            <div class="mini-list">
+                <input id="mini-list__toggle" type="checkbox">
+                <label for="mini-list__toggle" class="mini-list__navigator">
+                    <svg class="svg__arrow">
+                        <use xlink:href="#icon_arrow_bottom"></use>
+                    </svg>
+                    <div class="mini_categories">Cathegories</div>
+                </label>
+                <div class="second-header__list">
+                    {% block extra_header %}{% endblock extra_header %}
+                </div>
+            </div>
+            <form class="minisearch__form">
+                <input type="text" placeholder="Search here..." class="minisearch__input">
+            </form>
+            <div class="second-header__search">
+                <svg class="svg__minilupa">
+                    <use xlink:href="#icon_lupa"></use>
+                </svg>
+            </div>
+        </div>
+
+        <div class="second-header__field">
+            <div class="second-header__content-field">
+                {% block extra_content %}{% endblock extra_content %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

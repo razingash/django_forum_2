@@ -1,0 +1,56 @@
+{% extends 'forum/base_profile.html' %}
+
+{% load static %}
+
+{% block extra_header %}
+<a href="{% url 'profile' user.pk %}" class="mouse-aiming second-header__item">Comments</a>
+<a href="{% url 'profile_contribution' user.pk %}" class="mouse-aiming second-header__item current__item">Contribution</a>
+<a href="{% url 'profile_friends' user.pk %}" class="mouse-aiming second-header__item">Friends</a>
+{% if request.user.is_authenticated and user.id == user_id %}
+    <a href="{% url 'profile_events' user.pk %}" class="mouse-aiming second-header__item">Events</a>
+    <a href="{% url 'profile_bans' user.pk %}" class="mouse-aiming second-header__item">Bans</a>
+{% endif %}
+{% endblock %}
+
+{% block extra_content %}
+{% if discussions %}
+{% for discussion in discussions %}
+    <div class="content-field__contribution">
+        <a href="{{ discussion.get_absolute_url }}" class="activity__link">check</a>
+        <div class="activity__content">{{ discussion.theme }}</div>
+        <div class="activity__info">
+            <div class="activity__date">{{ discussion.creation_date|date:"Y-m-d" }}</div>
+            {% if discussion.rating > 0 %}
+                <div class="activity__rating positive">{{ discussion.rating }}</div>
+            {% elif discussion.rating < 0 %}
+                <div class="activity__rating negative">{{ discussion.rating }}</div>
+            {% elif discussion.rating == 0 %}
+                <div class="activity__rating activity__rating">{{ discussion.rating }}</div>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+    {% if discussions.has_other_pages %}<div class="pagination__profile">
+        {% if discussions.has_previous %}
+            <a href="?page={{ discussions.previous_page_number }}" class="pagination__link link__clickable"><</a>
+        {% else %}
+            <a class="pagination__link link__unclickable"><</a>
+        {% endif %}
+        {% for p in discussions.paginator.page_range %}
+            {% if discussions.number == p %}
+                <a href="?page={{ p }}" class="pagination__link link-selected">{{ p }}</a>
+            {% elif p >= discussions.number|add:-3 and p <= discussions.number|add:3 %}
+                <a href="?page={{ p }}" class="pagination__link">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if discussions.has_next %}
+            <a href="?page={{ discussions.next_page_number }}" class="pagination__link link__clickable">></a>
+        {% else %}
+            <a class="pagination__link link__unclickable">></a>
+        {% endif %}
+    </div>
+    {% endif %}
+{% else %}
+<div class="invisible_user">you haven't contributed yet<div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,378 @@
+
+
+#211e1e - темный(главная тема)
+//critical.css
+main background:
+
+#332f2f: - темный но светлее чем у темы
+//advanced_search.css
+advanced_search__container, search__container__footer, advanced_search__bunch, bunch__footer
+//auth_bate.css
+containter__form, header__item
+//comments_normal.css
+complaint__close, complaint__submit
+//custom_form.css
+content__settings_menu, content__form
+//discussion.css
+content__discussion
+//header.css
+search__container
+//pagination.css
+link-selected
+//polit_test.css
+content__test
+//profile.css
+profile, real_one__item, minisearch__input, mini-list__toggle:checked ~ .second-header__list
+
+
+#232121 - темный но темнее темы
+//comments_normal.css
+complaint__form
+//profile.css
+delete_friend_form
+
+
+#1c1c1d - темный темнее темы(от синего цвета идет)
+//polit_test.css
+.previous_question_button, .select_quetions_button, .next_question_button
+//profile.css
+profile__settings, .profile__extension, .add_friend
+
+
+#423e3e - серый ближе к кофейному
+//dda.css
+custom__search__field
+
+
+#5477f8 - неоновый синий
+//advanced_search.css
+bunch__header
+//header.css
+.subject__item.active, menu__bar
+
+
+#ffffff54
+//advanced_search.css
+bunch__header
+
+
+#9370db4f - темно фиолетовый
+//comments_normal.css
+comment__field
+
+
+#f8ee54 - почти неоновый желтый
+//advanced_search.css
+advanced_search__reset
+
+
+#ffffff - белый - white
+//advanced_search.css
+checkbox__item
+//auth_bate.css
+input__mail, input__password, input__nickname
+//comments_normal.css
+complaint__form, hedge_complaint__top_line, hedge_complaint__bottom_line, comment__nickname
+//custom_form.css
+form-label, specialization, tags__header
+//discussions.css
+survey__check__results, hedge__first-line, hedge__second-line
+//header.css
+.dropdown a, #menu__toggle:checked
+//pagination.css
+link__clickable
+//polit_test.css
+hedge__first-line, hedge__second-line, previous_question_button, select_quetions_button, next_question_button,
+//profile.css
+profile__face, profile__info, profile__settings, .profile__extension, .add_friend, symbol-info, card__close
+hedge__first-line, hedge__second-line, delete_friend_form, delete_header, hedge_remove_friend_top_line, DDA__info
+event__request
+
+
+#dbdbdb - пепельный (219. 219. 219)
+//comments_normal.css
+preview-upload_date, grade-standard
+//custom_form.css
+tags_list
+//dda.css
+preview-upload_date, visitors__amount, grade-standard
+//discussion.css
+discussion__creation_date, pagination
+//pagination.css
+pagination, pagination__profile, pagination__discussion,
+//profile.css
+activity__date, activity__rating, pagination, event__duration
+//start_page.css
+section__upload_date
+
+
+#ffffff38 - темно-пепельный
+//comments_normal.css
+reply__textarea, editing__textarea
+//custom_form.css
+form_textarea, form_input
+
+
+#000000 - черный(дефолт мб просто убрать) - black
+//auth_bate.css
+header__item
+//comments_normal.css
+comment__avatar, comment__reply, comment__movements, comment__editing
+//custom_form.css
+settings_menu__item:hover
+//dda.css
+preview-theme, preview-tag
+//discussion.css
+preview-tag
+//header.css
+.mouse-aiming:hover, .mouse-aiming:hover > a, dropdown
+//pagination.css
+link__unclickable
+//profile.css
+card__description, content-field__activity, content-field__contribution, friend__avatar, .event__user-avatar
+friend__remove, DDA__info, .event__choice > div
+
+
+#0000009c - черный прозрачный
+//auth_bate.css
+input__mail, input__password, input__nickname
+
+
+#ffffff7a - серый
+//auth_bate.css
+input__mail, input__password, input__nickname
+
+#f5deb3 - wheat
+//advanced_search.css
+author__lvl__input
+//comments_normal.css
+comment__reply, comment__movements, comment__editing
+//custom_form.css
+settings_menu__item:hover, settings_menu__item
+//dda.css
+preview-check
+//header.css
+header__item, mouse-aiming:hover, mouse-aiming:hover > a, search__result
+//profile.css
+profile__card, real_one__item, mini_categories, second-header__item, minisearch__input,
+activity__link, .DDA__link, .header__link
+
+
+
+#f5deb375 затемненный кофейный
+//dda.css
+custom__preview
+
+
+#ffb427 - яркий темно-ораньжевый
+//custom_form.css
+current__item
+//profile.css
+current__item
+
+
+#ffa600 - ораньжевый -
+delete_friend_form, delete_joke, .delete_kick_off
+
+
+#585353
+//advanced_search.css
+author__lvl__input
+//dda.css
+custom__search__field
+//profile.css
+second-header__field
+//start_page.css
+search-field
+
+
+#00000030 - не менять мб /прозрачный черный -
+//dda.css
+custom__search__field
+
+##000000b3 - не менять мб /прозрачный черный -
+//dda.css
+custom__preview
+
+
+#f5deb37d
+//dda.css
+custom__preview
+
+
+#ececec - немного затемненный белый -
+//advanced_search.css
+p_orientation__item, bunch__tag
+bunch__author
+state_0
+
+
+#1ed21e - теплый зеленый +-
+//advanced_search.css
+state_1
+
+
+#40e62d - яркий зеленый +-
+//comments_normal.css
+grade-positive
+//dda.css
+grade-positive
+//profile.css
+positive
+
+
+#32d020 зеленый
+//dda.css
+preview-tag
+//discussion.css
+preview-tag
+//profile.css
+DDA__info
+
+
+#e91759 - малиновый +-
+//advanced_search.css
+state_2, .checkbox__item
+
+
+#ec2626 - темно-ярко-красный +-
+//advanced_search.css
+grade-negative
+//dda.css
+grade-negative
+//profile.css
+negative
+
+
+#ecd526 - золотой +-
+//profile.css
+certificate__theme
+//start_page.css
+section__theme, .title
+
+
+#fff500b2 - золотистый(копро) ++? мб менять с темой
+//profile.css
+content-field__friend
+
+
+#d3a01e - желтый с гнильцой +-
+//profile.css
+
+
+#53da53 - zeleniy +-
+//profile.css
+event__choose-accept
+
+
+#da5553 - krasniy +-
+//profile.css
+event__choose-reject
+
+|||||||||||||||||||||           спорные цвета(сверху тоже пару таких есть)       ||||||||||||||||||||
+
+#cacaca - оттенок пепельного +
+//profile.css
+content-field__certificate, card__pseudonym
+//start_page.css
+section
+//discussion.css
+discussion__survey__theme, survey__bar__weight, discussion__info, discussion__theme
+
+
+#ffffff2b - прозрачный серый +-
+//discussion.css
+survey__bar
+
+
+#ededed +-
+//profile.css
+minisearch__input
+
+
+#0000003f +-
+//profile.css
+second-header__field
+//start_page.css
+search-field
+
+
+#038d03
+//pagination.css ?
+link-selected
+
+
+#f94040 еще один красный(светлый) вроде более-менее ?+
+//profile.css
+friend__remove, discussion__author, preview-author
+
+
+|||||||||||||||            mb нахер не надо пока          ||||||||||||
+#000000a5 прозрачный черный +
+//discussion.css
+survey__bar, survey__bar__progress
+
+
+#af925b +-
+//discussion.css
+survey__bar__progress
+
+#ababab - rgb(171 171 171) оттенок пепельного +
+//header.css
+subject__item
+
+#fff6 - оттенок серого +
+//header.css
+search__result
+
+
+#ffffff30 - оттенок серого +
+//profile.css
+card__description
+
+
+#00000070 - тень +
+#00000019 - тень +
+//profile.css
+profile__card, minisearch__input, delete_friend_form
+
+
+##fff900 - желтый +
+//profile.css
+.friend__nickname, .event__user-nickname
+
+|||||||||||||||||||||| ne menat      |||||||||||||||||||||||| +-
+#ff004cb2
+//profile.css
+event__debates
+
+
+#fa800ec5
+//profile.css
+event__reply
+
+
+#ffffffc8
+//profile.css
+event__invite
+
+
+#15ea3cc8
+//profile.css
+event__friend-undefined
+
+
+#e310fbc8
+//profile.css
+event__friend-woman
+
+
+#0054fbf4
+//profile.css
+event__friend-man
+
+
+|||||||||||||||||||||||||||||||||||||
++ просто заменить на атрибут
++- не менять ничего
+++ добавить в изменение для темы

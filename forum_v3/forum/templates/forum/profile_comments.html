@@ -1,0 +1,56 @@
+{% extends 'forum/base_profile.html' %}
+
+{% load static %}
+{% block extra_header %}
+<a href="{% url 'profile' user.pk %}" class="mouse-aiming second-header__item current__item">Comments</a>
+<a href="{% url 'profile_contribution' user.pk %}" class="mouse-aiming second-header__item">Contribution</a>
+<a href="{% url 'profile_friends' user.pk %}" class="mouse-aiming second-header__item">Friends</a>
+{% if request.user.is_authenticated and user.id == user_id %}
+    <a href="{% url 'profile_events' user.pk %}" class="mouse-aiming second-header__item">Events</a>
+    <a href="{% url 'profile_bans' user.pk %}" class="mouse-aiming second-header__item">Bans</a>
+{% endif %}
+{% endblock %}
+
+{% block extra_content %}
+{% if comments %}
+{% for comment in comments %}
+    <div class="content-field__activity">
+        <a href="{% url 'discussion' comment.dda_id %}#{{ comment.id }}" class="activity__link">check</a>
+        <div class="activity__content">{{ comment.comment }}</div>
+        <div class="activity__info">
+            <div class="activity__date">{{ comment.upload_date|date:"Y-m-d" }}</div>
+            {% if comment.rating > 0 %}
+                <div class="activity__rating positive">{{ comment.rating }}</div>
+            {% elif comment.rating < 0 %}
+                <div class="activity__rating negative">{{ comment.rating }}</div>
+            {% elif comment.rating == 0 %}
+                <div class="activity__rating activity__rating">{{ comment.rating }}</div>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+    {% if comments.has_other_pages %}
+        <div class="pagination__profile">
+            {% if comments.has_previous %}
+                <a href="?page={{ comments.previous_page_number }}" class="pagination__link link__clickable"><</a>
+            {% else %}
+                <a class="pagination__link link__unclickable"><</a>
+            {% endif %}
+            {% for p in comments.paginator.page_range %}
+                {% if comments.number == p %}
+                    <a href="?page={{ p }}" class="pagination__link link-selected">{{ p }}</a>
+                {% elif p >= comments.number|add:-3 and p <= comments.number|add:3 %}
+                    <a href="?page={{ p }}" class="pagination__link">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if comments.has_next %}
+                <a href="?page={{ comments.next_page_number }}" class="pagination__link link__clickable">></a>
+            {% else %}
+                <a class="pagination__link link__unclickable">></a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% else %}
+<div class="invisible_user">you haven't left your mark yet<div>
+{% endif %}
+{% endblock %}

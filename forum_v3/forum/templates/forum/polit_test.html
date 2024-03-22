@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <link rel="stylesheet" type="text/css" href="../../must_be_bg.css">
+    <link rel="stylesheet" type="text/css" href="styles/header.css">
+    <link rel="stylesheet" type="text/css" href="styles/polit_test.css">
+</head>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const quetionCheckbox = document.querySelectorAll('.test__quetion__checkbox');
+
+        quetionCheckbox.forEach(checkbox => {
+            // Добавляем обработчик события 'change' на каждый чекбокс
+            checkbox.addEventListener('change', function() {
+                // Если текущий чекбокс был отмечен, отмечаем только его, а остальные снимаем
+                if (this.checked) {
+                    quetionCheckbox.forEach(cb => {
+                        if (cb !== this) {
+                            cb.checked = false;
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>    
+<body>
+    <div class="header">
+        <div class="header__logo">
+            <a href="#" class="header__item mouse-aiming">Dominant</a>
+        </div>
+        <ul class="header__list">
+            <li class="mouse-aiming"><a href="#" class="header__item">Debates</a></li>
+            <li class="mouse-aiming"><a href="#" class="header__item">Discussions</a></li>
+            <li class="mouse-aiming"><a href="#" class="header__item">Articles</a></li>
+        </ul>
+        <div class="header__for-user">
+            <input id="search__toggle" type="checkbox">
+            <label for="search__toggle" class="header__search">
+                <svg class="svg__lupa" viewBox="0 0 189.7 206.87" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m24.035 16.644c-28.851 24.332-31.49 68.685-7.415 96.315 20.072 22.777 52.941 31.284 83.897 15.88l64.462 75.223c5.9592 6.9533 17.305-2.7702 17.305-2.7702s11.346-9.7236 5.3864-16.677l-64.484-75.241c19.019-25.918 19.549-64.037-8.6702-91.331-26.914-24.234-65.402-22.618-90.481-1.3982zm9.4441 11.143a54.077 54.077 0 0 1 76.251 5.8703 54.077 54.077 0 0 1-5.87 76.251 54.077 54.077 0 0 1-76.251-5.8704 54.077 54.077 0 0 1 5.8707-76.251z" fill="#fff" stroke-miterlimit="3.6" stroke-opacity="0"/>
+                </svg>
+            </label>
+            <div class="search__container">
+                <div class="input__container">
+                    <form class="search__form">
+                        <input class="search__form__input" type="text" placeholder="search...">
+                    </form>
+                    <svg class="header__svg-cross" viewBox="0 0 109.6 128.65" xmlns="http://www.w3.org/2000/svg">
+                        <path d="m36.406 64.314-31.762-39.345c-13.398-17.293 8.8801-33.988 22.192-17.921l27.913 34.459 27.964-34.459c14.42-16.668 35.339 1.7535 22.192 17.921l-31.823 39.372 31.927 39.51c13.13 16.071-8.3859 34.13-22.192 17.921l-28.042-34.782-28.042 34.782c-12.596 15.707-35.542-0.53837-22.192-17.921z" fill="#fffefe" stroke="#000" stroke-miterlimit="3.6"/>
+                    </svg>
+                </div>
+                <div class="search__subject__split">
+                    <ul class="search__subject">
+                        <li class="subject__item">debates</li>
+                        <li class="subject__item">discussions</li>
+                        <li class="subject__item">articles</li>
+                        <li class="subject__item">test</li>
+                        <li class="subject__item">test</li>
+                        <li class="subject__item">test</li>
+                        <li class="subject__item">debates</li>
+                        <li class="subject__item">discussions</li>
+                        <li class="subject__item">articles</li>
+                        <li class="subject__item">test</li>
+                        <li class="subject__item">test</li>
+                        <li class="subject__item">test</li>
+                    </ul>
+                </div>
+                <div class="search__results">
+                    <div class="search__result">custom result 2</div>
+                    <div class="search__result">custom result 3</div>
+                    <div class="search__result">custom result 1</div>
+                    <div class="search__result">custom result 2</div>
+                    <div class="search__result">custom result 3</div>
+                    <div class="search__result">custom result 1</div>
+                    <div class="search__result">custom result 2</div>
+                    <div class="search__result">custom result 3</div>
+                    <div class="search__result">custom result 1</div>
+                    <div class="search__result">custom result 2</div>
+                    <div class="search__result">custom result 3</div>
+                    <div class="search__result">custom result 1</div>
+                    <div class="search__result">custom result 2</div>
+                    <div class="search__result">custom result 3</div>
+                    <div class="search__result">custom result 1</div>
+                    <div class="search__result">custom result 2</div>
+                    <div class="search__result">custom result 3</div>
+                </div>
+            </div>
+            <a href="#" class="user__icon">
+                <svg class="svg__user" viewBox="0 0 149 149" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(.99998)" stroke-miterlimit="3.6">
+                     <g transform="translate(-.19998 .2)" fill-opacity=".18844">
+                      <g fill-opacity="1">
+                       <circle cx="73.7" cy="74.3" r="74" stroke="#000"/>
+                       <g fill="#fff" stroke-opacity="0">
+                        <circle cx="73.7" cy="46.432" r="26.151"/>
+                        <path d="m137.41 111.36c-3.243-5.5138-7.2213-10.649-12.024-15.387-5.8917-5.8127-11.27-9.7111-18.298-13.263-10.696-5.4052-21.431-7.9716-33.339-7.9716-6.068 0-11.998 0.72096-17.711 2.1125-0.16454 0.0412-0.3314 0.075-0.49558 0.1173-0.69823 0.17525-1.3875 0.37706-2.0789 0.57257-1.0218 0.29565-2.041 0.59774-3.0468 0.93638-0.19367 0.0641-0.38829 0.12549-0.58136 0.19121-11.957 4.1361-22.718 11.29-31.179 20.831-0.0282 0.0317-0.0581 0.0623-0.0863 0.094-1.0436 1.1809-2.0513 2.3991-3.0226 3.6515-0.0233 0.0299-0.047 0.0595-0.0703 0.0894-1.9683 2.5462-3.784 5.2367-5.4276 8.0626-0.0065-0.011-0.01163-0.0226-0.01809-0.0336-0.0049 8e-3 -0.0096 0.0169-0.01447 0.0253a74 74 0 0 0 63.688 36.739 74 74 0 0 0 63.706-36.768z"/>
+                       </g>
+                      </g>
+                     </g>
+                    </g>
+                </svg>
+            </a>
+            <input id="theme__toggle" type="checkbox">
+            <label for="theme__toggle" class="theme__button">
+                <svg class="svg__in-yan" viewBox="0 0 159.35 159.35" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-25.323 -68.635)"><path d="m105 71.135c-42.624 4e-6 -77.177 34.553-77.177 77.177-1e-6 42.624 34.553 77.177 77.177 77.177 42.624 0 77.177-34.553 77.177-77.177s-34.553-77.177-77.177-77.177zm0.0129 0.47904c23.385 0.38352 38.307 19.465 38.324 34.906-1.2903 35.983-24.215 41.316-38.337 41.98-18.101 0.52259-40.315 16.966-37.396 43.606 1.254 14.812 11.481 29.287 32.168 33.208-15.864-1.2983-30.768-7.4983-42.894-17.289-17.564-14.33-28.452-34.659-28.58-60.189 0.45104-45.229 37.154-76.403 76.714-76.222z" fill="#fff" stroke="#000" stroke-miterlimit="3.6" stroke-width="5"/>
+                    <path d="m105.01 71.614c-39.56-0.18066-76.263 30.993-76.714 76.222 0.12866 25.53 11.016 45.859 28.58 60.189 12.126 9.7905 26.769 15.534 42.633 16.832-19.315-6.402-30.654-17.939-31.908-32.751-2.9191-26.64 19.295-43.084 37.396-43.606 14.123-0.66478 37.047-5.9978 38.337-41.98-0.0174-15.441-14.939-34.522-38.324-34.906z" stroke-miterlimit="3.6" stroke-opacity="0"/><circle cx="105" cy="110.07" r="17.961" fill="#fff"/><circle cx="105" cy="186.86" r="16.795"/></g>
+                </svg>
+            </label>
+        </div>
+        <div class="header__sliding__menu">
+            <input id="menu__toggle" type="checkbox">
+            <label for="menu__toggle" class="menu__button">
+                <span class="menu__bar"></span>
+                <span class="menu__bar"></span>
+                <span class="menu__bar"></span>
+            </label>
+            <div class="dropdown">
+                <a href="#">Profile</a>
+                <a href="#">Debates</a>
+                <a href="#">Discussions</a>
+                <a href="#">Articles</a>
+                <a href="#">Log out / Log in</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="core__section">
+        <div class="content__test">
+            <div class="test__header">Political coordinates test</div>
+            <div class="test__description">this test isnt accurate</div>
+
+            <div class="hedge">
+                <span class="hedge__first-line"></span>
+                <span class="hedge__second-line"></span>
+            </div>
+
+            <div class="test__field">
+                <div class="test__question">Как вы относитесь к государственному регулированию экономики?</div>
+                <div class="quetion__field">
+                    <div class="quetions__list" id="1">
+                        <label class="quetion__item">
+                            <input type="checkbox" class="test__quetion__checkbox">
+                            <div class="quetion__answer">Полное государственное вмешательство</div>
+                        </label>
+                        <label class="quetion__item">
+                            <input type="checkbox" class="test__quetion__checkbox">
+                            <div class="quetion__answer">Среднее государственное вмешательство</div>
+                        </label>
+                        <label class="quetion__item">
+                            <input type="checkbox" class="test__quetion__checkbox">
+                            <div class="quetion__answer">Минимальное государственное вмешательство</div>
+                        </label>
+                        <label class="quetion__item">
+                            <input type="checkbox" class="test__quetion__checkbox">
+                            <div class="quetion__answer">Абсолютное отсутствие государственного вмешательства</div>
+                        </label>
+                    </div>
+                </div>
+                <div class="test__buttons">
+                    <div class="previous_question_button">previous</div>
+                    <div class="next_question_button">next</div>
+                </div>
+                <div class="test__buttons">
+                    <div class="select_quetions_button">select</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

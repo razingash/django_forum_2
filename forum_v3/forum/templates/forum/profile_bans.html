@@ -1,0 +1,51 @@
+{% extends 'forum/base_profile.html' %}
+
+{% load static %}
+{% block extra_header %}
+<a href="{% url 'profile' user.pk %}" class="mouse-aiming second-header__item">Comments</a>
+<a href="{% url 'profile_contribution' user.pk %}" class="mouse-aiming second-header__item">Contribution</a>
+<a href="{% url 'profile_friends' user.pk %}" class="mouse-aiming second-header__item">Friends</a>
+{% if request.user.is_authenticated %}
+    <a href="{% url 'profile_events' user.pk %}" class="mouse-aiming second-header__item">Events</a>
+    <a href="{% url 'profile_bans' user.pk %}" class="mouse-aiming second-header__item current__item">Bans</a>
+{% endif %}
+{% endblock %}
+
+{% block extra_content %}
+{% if bans %}
+    {% for ban in bans %}<div class="content-field__certificate">
+        <div class="certificate__theme">CONGRATULATIONS</div>
+        <div class="certificate__content">you have been banned for {{ ban.reason }}</div>
+        <ul class="certificate__limits">
+            <li class="certificate__limits__item">since {{ ban.durability_from|date:"Y-m-d" }}</li>
+            <li class="certificate__limits__item">to ... {{ ban.durability_to|date:"Y-m-d" }}</li>
+        </ul>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="content-field__certificate">
+        <div class="certificate__theme">CONGRATULATIONS</div>
+        <div class="certificate__content">you haven't disrupted our rules yet</div>
+    </div>
+{% endif %}
+    {% if bans.has_other_pages %}<div class="pagination__profile">
+        {% if bans.has_previous %}
+            <a href="?page={{ bans.previous_page_number }}" class="pagination__link link__clickable"><</a>
+        {% else %}
+            <a class="pagination__link link__unclickable"><</a>
+        {% endif %}
+        {% for p in bans.paginator.page_range %}
+            {% if bans.number == p %}
+                <a href="?page={{ p }}" class="pagination__link link-selected">{{ p }}</a>
+            {% elif p >= bans.number|add:-3 and p <= bans.number|add:3 %}
+                <a href="?page={{ p }}" class="pagination__link">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if bans.has_next %}
+            <a href="?page={{ bans.next_page_number }}" class="pagination__link link__clickable">></a>
+        {% else %}
+            <a class="pagination__link link__unclickable">></a>
+        {% endif %}
+    </div>
+    {% endif %}
+{% endblock %}

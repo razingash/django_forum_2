@@ -1,0 +1,48 @@
+from forum.models import *
+nature = Specializations.objects.create(name='Nature')
+policy = Specializations.objects.create(name='Policy')
+science = Specializations.objects.create(name='Science')
+history = Specializations.objects.create(name='History')
+ethics = Specializations.objects.create(name='Morality')
+philosophy = Specializations.objects.create(name='Philosophy')
+
+categories = [
+    (philosophy, ["Logics", "Theology", "Axiology", "Existentialism", "Dialectics"]),
+    (ethics, ["Morality", "Ethics", "Bioethics", "Infoethics", "Deontology", "Cultural anthropology"]),
+    (policy, ["Geopolitics", "International relationships", "Parties", "Migrations", "Ideologies", "Political orientations", "Intercultural anthropology", "Politicians"]),
+    (nature, ["Flora", "Fauna", "Planetology", "Ecology", "Geography", "Climate", "Geology", "Evolution", "Degradation", "Natural disasters"]),
+    (science, ["Renewable resources", "Nonrenewable Resources", "Theory", "Astronomy", "Astrophysics", "Astronavigation", "Technologies", "Research", "Education"]),
+    (history, ["Middle Ages", "New time", "Modern times", "Cultural exchanges", "Religions", "Wars", "Cultural movements", "Sectology", "Historical figures", "Migration", "Great names of history"])
+]
+
+for category, tags in categories:
+    for tag_name in tags:
+        InterlocutionTags.objects.create(name=tag_name, category=category)
+
+
+CustomUser.objects.create_user(username='raiz', password='root', email='testmail1@gmail.com')
+CustomUser.objects.create_user(username='raibak', password='root', email='testmail2@gmail.com')
+CustomUser.objects.create_user(username='user3', password='root', email='testmail3@gmail.com')
+CustomUser.objects.create_user(username='user4', password='root', email='testmail4@gmail.com')
+user1 = CustomUser.objects.get(username='raiz')
+user2 = CustomUser.objects.get(username='raibak')
+user3 = CustomUser.objects.get(username='user3')
+user4 = CustomUser.objects.get(username='user4')
+
+users = [user1, user2, user3, user4]
+tags = InterlocutionTags.objects.all()
+
+friendship1 = Friendship(user1_id=user1.pk, user2_id=user2.pk)
+friendship1.save()
+friendship0 = Friendship(user1_id=user3.pk, user2_id=user1.pk)
+friendship0.save()
+friendship0 = Friendship(user1_id=user1.pk, user2_id=user4.pk)
+friendship0.save()
+
+for user_outer in users:
+    for tag in tags:
+        discussion = Discussion.objects.create(creator=user_outer, theme=f'test theme by {user_outer} with tag {tag}', content=f'test content by {user_outer}')
+        DiscussionTags.objects.create(DDA=discussion, tag=tag)
+        for user_inner in users:
+            comm = Comments.objects.create(comment=f'Comment by {user_inner} for discussion {discussion.theme}', author=user_inner, dda_id=discussion.pk)
+            DiscussionComments.objects.create(DDA=discussion, comment=comm)
