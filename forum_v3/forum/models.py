@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator, MinLengthValidator
-from django.db import models
+from django.db import models, connection
 from django.db.models import UniqueConstraint, Q
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
@@ -314,3 +314,24 @@ class DiscussionComments(models.Model):
     class Meta:
         db_table = 'dt_discussion_comments'
 
+
+class DailyActivity(models.Model):
+    class ActivityType(models.TextChoices):
+        NewDiscussion = '9', '9'
+        NewComment = '1', '1'
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=False, null=False)
+    activity_spec = models.ForeignKey(Specializations, on_delete=models.CASCADE, blank=False, null=False)
+    date = models.DateField(auto_now_add=True, null=False, blank=False)
+    activity_type = models.CharField(choices=ActivityType.choices, max_length=1, blank=False, null=False)
+
+    class Meta:
+        db_table = 'dt_daily_activity'
+
+@receiver(post_save, sender=DailyActivity)
+def insurance(sender, instance, created, **kwargs):
+    if created:
+        if instance.pk >= 6917529027641081856:
+            with connection.cursor() as cursor:
+                print('---  INSURANCE  ---')
+                cursor.execute("ALTER SEQUENCE dt_daily_activity_id_seq RESTART WITH 1;")

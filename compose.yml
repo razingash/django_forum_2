@@ -1,5 +1,12 @@
 version: '3.8'
 
+x-default-environment: &default-environment
+  DB_NAME: 'django_forum_v3'
+  DB_USER: 'postgres'
+  DB_PASSWORD: 'root'
+  DB_HOST: 'postgres'
+  DB_PORT: '5432'
+
 services:
   postgres:
     image: postgres:16
@@ -13,18 +20,52 @@ services:
     networks:
       - localnet
 
+  celery-broker:
+    image: redis
+    container_name: celery_broker__redis
+    ports:
+      - "6379:6379"
+    networks:
+      - localnet
+
+  celery:
+    build:
+      context: ./forum_v3
+    container_name: celery
+    depends_on:
+      - celery-broker
+      - postgres
+    environment:
+      <<: *default-environment
+    command: >
+      sh -c "celery -A forum_v3 worker -l info"
+    networks:
+      - localnet
+
+  celery-beat:
+    build:
+      context: ./forum_v3
+    container_name: celery_beat
+    depends_on:
+      - celery-broker
+      - postgres
+    environment:
+      <<: *default-environment
+    command: >
+      sh -c "celery -A forum_v3 beat -l INFO"
+    networks:
+      - localnet
+
   django-forum:
     build:
       context: ./forum_v3
     container_name: core_api
     depends_on:
+      - celery
+      - celery-beat
       - postgres
     environment:
-      DB_NAME: 'django_forum_v3'
-      DB_USER: 'postgres'
-      DB_PASSWORD: 'root'
-      DB_HOST: 'postgres'
-      DB_PORT: '5432'
+      <<: *default-environment
     ports:
       - "8001:8000"
     command: >

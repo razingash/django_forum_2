@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'forum.apps.ForumConfig',
+    'django_celery_results',
+    'django_celery_beat',
     'debug_toolbar'
 ]
 
@@ -140,3 +142,9 @@ INTERNAL_IPS = [
     '127.0.0.1'
 ]
 
+CELERY_TIMEZONE = "Poland"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BROKER_URL = "redis://celery-broker:6379"
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"

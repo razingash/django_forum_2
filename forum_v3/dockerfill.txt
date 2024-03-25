@@ -1,4 +1,5 @@
 from forum.models import *
+from datetime import date
 nature = Specializations.objects.create(name='Nature')
 policy = Specializations.objects.create(name='Policy')
 science = Specializations.objects.create(name='Science')
@@ -38,7 +39,7 @@ friendship0 = Friendship(user1_id=user3.pk, user2_id=user1.pk)
 friendship0.save()
 friendship0 = Friendship(user1_id=user1.pk, user2_id=user4.pk)
 friendship0.save()
-
+date = date.today()
 for user_outer in users:
     for tag in tags:
         discussion = Discussion.objects.create(creator=user_outer, theme=f'test theme by {user_outer} with tag {tag}', content=f'test content by {user_outer}')
@@ -46,3 +47,6 @@ for user_outer in users:
         for user_inner in users:
             comm = Comments.objects.create(comment=f'Comment by {user_inner} for discussion {discussion.theme}', author=user_inner, dda_id=discussion.pk)
             DiscussionComments.objects.create(DDA=discussion, comment=comm)
+    for type in range(1, 7):
+        for i in range(100000):
+            DailyActivity.objects.create(date=date, activity_type=type, user=user_outer, activity_spec_id=1)
