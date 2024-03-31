@@ -3,15 +3,28 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.core.paginator import Paginator
-from django.db.models import Prefetch, Q, Count
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, FormView
+from django.views.generic import ListView, DetailView, CreateView, FormView
 from forum.forms import LoginCustomUserForm, RegisterCustomUserForm, ChangeCustomUserForm, \
     ChangeCustomUserDescriptionForm, ChangeCustomUserPasswordForm, CreateDiscussionForm
-from forum.models import CustomUser, Specializations, UserDescription, Discussion, InterlocutionTags, \
-    DiscussionComments, DiscussionTags, Friendship, Comments, Culprits, UserEvents, CommentsRating, DiscussionGrades
+from forum.models import CustomUser, Discussion
+from forum.services import get_several_filtered_ordered_discussions, get_several_filtered_ordered_users, \
+    get_comments_filtered_ordered, get_profile_info, get_friendship_event_check, get_friendship_check, \
+    create_friendship_event, \
+    get_friendship_link, get_user_friends, get_friendship, get_user_bans, get_user_events, get_event_check, get_event, \
+    create_friendship, get_user_discussions, get_specializations_and_tags, get_values_list_tags, \
+    create_bulk_discussion_tags, get_all_tags, get_p_orient_choices, get_custom_discussion, \
+    get_custom_discussion_inc_exc, get_custom_discussion_inc, get_custom_discussion_exc, \
+    get_custom_discussion_p_inc_p_exc, get_custom_discussion_p_inc_p_exc_inc_exc, get_custom_discussion_p_inc_p_exc_inc, \
+    get_custom_discussion_p_inc_p_exc_exc, get_custom_discussion_p_inc, get_custom_discussion_p_inc_inc_exc, \
+    get_custom_discussion_p_inc_inc, get_custom_discussion_p_inc_exc, get_custom_discussion_p_exc, \
+    get_custom_discussion_p_exc_inc_exc, get_custom_discussion_p_exc_inc, get_custom_discussion_p_exc_exc, \
+    get_discussion_by_user, get_discussion_objects_by_id, get_discussion_grade_check, create_grade_for_discussion, \
+    get_discussion_grade, get_comments_for_discussion, get_discussion_data, get_comments_grade_check, get_user_comment, \
+    get_comment_by_user, create_grade_for_comment, get_comment_grade, get_comment_check, get_discussion_comment, \
+    get_comment_by_id_dda_id, get_comment_advanced, get_discussion_comments_by_id, object_create_comment
 from forum.utils import DataMixin
 
 
@@ -32,8 +45,7 @@ class RulesPage(ListView, DataMixin):
         if request.POST.get('request_type') == 'discussions_search':
             print('discussion_search')
             search_request = request.POST.get('search_request')
-            discussions = Discussion.objects.only('id', 'theme').order_by('theme').filter(
-                theme__icontains=search_request)[:10]
+            discussions = get_several_filtered_ordered_discussions(search_request=search_request)
             print(discussions)
             result = 'nothing founded'
             if len(discussions) > 0:
@@ -42,8 +54,7 @@ class RulesPage(ListView, DataMixin):
         elif request.POST.get('request_type') == 'users_search':
             print('users_search')
             search_request = request.POST.get('search_request')
-            users = CustomUser.objects.only('id', 'username').order_by('username').filter(
-                username__icontains=search_request)[:10]
+            users = get_several_filtered_ordered_users(search_request=search_request)
             result = 'nothing founded'
             if len(users) > 0:
                 result = [{'id': user.id, 'username': user.username, 'get_absolute_url': user.get_absolute_url()} for user in users]
@@ -139,8 +150,7 @@ class ProfilePage(DetailView, DataMixin):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         user_id = self.kwargs.get('profile_id')
-        comments = Comments.objects.only('id', 'upload_date', 'comment', 'rating', 'dda_id').filter(author_id=user_id)
-        comments = comments.order_by('-id')
+        comments = get_comments_filtered_ordered(user_id=user_id)
 
         paginator = Paginator(comments, self.paginate_by)
         page_number = self.request.GET.get('page')
@@ -154,11 +164,7 @@ class ProfilePage(DetailView, DataMixin):
 
     def get_object(self, queryset=None):
         profile_id = self.kwargs.get('profile_id')
-        user_des = Prefetch('userdescription',
-                            queryset=UserDescription.objects.only('id', 'sex', 'birth_date', 'political_orientation',
-                                                                  'art_style', 'ideology', 'credo', 'description', 'user_id'))
-        user_spec = Prefetch('userspecializations_set__specialization', queryset=Specializations.objects.all())
-        queryset = CustomUser.objects.filter(id=profile_id).prefetch_related(user_des, 'userspecializations_set', user_spec).only('id', 'username', 'avatar', 'level', 'date_joined')
+        queryset = get_profile_info(profile_id=profile_id)
         return get_object_or_404(queryset)
 
     def post(self, request, *args, **kwargs):
@@ -167,11 +173,9 @@ class ProfilePage(DetailView, DataMixin):
             receiver_id = self.kwargs.get('profile_id')
             sender_id = request.POST.get('sender_id')
             print(sender_id, receiver_id)
-            event = UserEvents.Requests.INVITE_FRIENDSHIP
-            if not UserEvents.objects.filter(Q(event=event, receiver_id=receiver_id, sender_id=sender_id)
-                                             | Q(event=event, receiver_id=sender_id, sender_id=receiver_id)).exists():
-                if not Friendship.objects.filter(Q(user1=receiver_id, user2=sender_id) | Q(user1=sender_id, user2=receiver_id)).exists():
-                    new = UserEvents.objects.create(event=event, sender_id=sender_id, receiver_id=receiver_id)
+            if not get_friendship_event_check(receiver_id=receiver_id, sender_id=sender_id):
+                if not get_friendship_check(receiver_id=receiver_id, sender_id=sender_id):
+                    create_friendship_event(sender_id=sender_id, receiver_id=receiver_id)
                     self.object = self.get_object()
                     context = self.get_context_data(object=self.object)
                     return self.render_to_response(context)
@@ -187,11 +191,11 @@ class ProfileFriendsPage(DetailView, DataMixin):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         user_id = self.kwargs.get('profile_id')
-        friendship_records = Friendship.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+        friendship_records = get_friendship_link(user_id)
         related_user_ids = set(chain(friendship_records.values_list('user1_id', flat=True),
                                      friendship_records.values_list('user2_id', flat=True)))
         related_user_ids.discard(user_id)
-        friends = CustomUser.objects.order_by('-username').only('id', 'username', 'avatar').filter(id__in=related_user_ids)
+        friends = get_user_friends(related_user_ids)
 
         paginator = Paginator(friends, self.paginate_by)
         page_number = self.request.GET.get('page')
@@ -204,16 +208,10 @@ class ProfileFriendsPage(DetailView, DataMixin):
         return context | mix
 
     def get_object(self, queryset=None):
-        profile = self.kwargs.get('profile_id')
-        user_des = Prefetch('userdescription',
-                            queryset=UserDescription.objects.only('id', 'sex', 'birth_date', 'political_orientation',
-                                                                  'art_style', 'ideology', 'credo', 'description', 'user_id'))
-        user_spec = Prefetch('userspecializations_set__specialization', queryset=Specializations.objects.all())
-        queryset = CustomUser.objects.filter(id=profile).prefetch_related(user_des, 'userspecializations_set',
-                                                                          user_spec).only('id', 'username', 'avatar',
-                                                                                          'level', 'date_joined')
+        profile_id = self.kwargs.get('profile_id')
+        queryset = get_profile_info(profile_id=profile_id)
         queryset = get_object_or_404(queryset)
-        queryset.userspecializations_set.filter(user_id=profile)
+        queryset.userspecializations_set.filter(user_id=profile_id)
         return queryset
 
     def post(self, request, *args, **kwargs):
@@ -221,9 +219,8 @@ class ProfileFriendsPage(DetailView, DataMixin):
         if request.POST.get('event') == 'broken friendship':
             user_id = self.request.user.id
             friend_id = request.POST.get('friend_id')
-            friendship = Friendship.objects.filter(Q(user1_id=user_id, user2_id=friend_id) | Q(user1_id=friend_id, user2_id=user_id)).exists()
-            if friendship:
-                friendship = Friendship.objects.get(Q(user1_id=user_id, user2_id=friend_id) | Q(user1_id=friend_id, user2_id=user_id))
+            if get_friendship_check(user_id, friend_id):
+                friendship = get_friendship(user_id=user_id, friend_id=friend_id)
                 friendship.delete()
             else:
                 raise ValueError('Error due to incorrect friendship in friends view')
@@ -240,7 +237,7 @@ class ProfileBansPage(DetailView, DataMixin):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         user_id = self.kwargs.get('profile_id')
-        bans = Culprits.objects.filter(user_id=user_id).order_by('-id')
+        bans = get_user_bans(user_id=user_id)
 
         paginator = Paginator(bans, self.paginate_by)
         page_number = self.request.GET.get('page')
@@ -254,11 +251,7 @@ class ProfileBansPage(DetailView, DataMixin):
 
     def get_object(self, queryset=None):
         profile_id = self.kwargs.get('profile_id')
-        user_des = Prefetch('userdescription',
-                            queryset=UserDescription.objects.only('id', 'sex', 'birth_date', 'political_orientation',
-                                                                  'art_style', 'ideology', 'credo', 'description', 'user_id'))
-        user_spec = Prefetch('userspecializations_set__specialization', queryset=Specializations.objects.all())
-        queryset = CustomUser.objects.filter(id=profile_id).prefetch_related(user_des, 'userspecializations_set', user_spec).only('id', 'username', 'avatar', 'level', 'date_joined')
+        queryset = get_profile_info(profile_id=profile_id)
         return get_object_or_404(queryset)
 
     def dispatch(self=None, request=None, *args, **kwargs):
@@ -277,10 +270,7 @@ class ProfileEventsPage(DetailView, DataMixin):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         user_id = self.kwargs.get('profile_id')
-
-        events = UserEvents.objects.filter(receiver_id=user_id).order_by('-id').select_related('sender').prefetch_related(
-            Prefetch('sender__userdescription', queryset=UserDescription.objects.only('sex'))
-        ).only('id', 'event', 'sender__id', 'sender__username', 'sender__avatar', 'sender__userdescription__sex')
+        events = get_user_events(user_id=user_id)
 
         paginator = Paginator(events, self.paginate_by)
         page_number = self.request.GET.get('page')
@@ -294,23 +284,20 @@ class ProfileEventsPage(DetailView, DataMixin):
 
     def get_object(self, queryset=None):
         profile_id = self.kwargs.get('profile_id')
-        user_des = Prefetch('userdescription',
-                            queryset=UserDescription.objects.only('id', 'sex', 'birth_date', 'political_orientation',
-                                                                  'art_style', 'ideology', 'credo', 'description', 'user_id'))
-        user_spec = Prefetch('userspecializations_set__specialization', queryset=Specializations.objects.all())
-        queryset = CustomUser.objects.filter(id=profile_id).prefetch_related(user_des, 'userspecializations_set', user_spec).only('id', 'username', 'avatar', 'level', 'date_joined')
+        queryset = get_profile_info(profile_id=profile_id)
         return get_object_or_404(queryset)
 
     def post(self, request, *args, **kwargs):
         print(request.POST)
         profile_id = self.kwargs.get('profile_id')
-        if request.POST.get('event') == 'event__friendship' and UserEvents.objects.filter(event='friendship', receiver_id=profile_id, sender_id=request.POST.get('sender_id')).exists():
-            sender_id = request.POST.get('sender_id')
+        sender_id = request.POST.get('sender_id')
+        if request.POST.get('event') == 'event__friendship' and get_event_check(event='friendship',
+                                                                                profile_id=profile_id,
+                                                                                sender_id=sender_id):
             print('friendship')
-            event = UserEvents.objects.get(event='friendship', receiver_id=profile_id, sender_id=sender_id)
+            event = get_event(event='friendship', profile_id=profile_id, sender_id=sender_id)
             if request.POST.get('event_type') == 'accept':
-                friends_link = Friendship(user1_id=request.POST.get('sender_id'), user2_id=self.kwargs.get('profile_id'))
-                friends_link.save()
+                create_friendship(sender_id=sender_id, profile_id=profile_id)
                 event.delete()
             elif request.POST.get('event_type') == 'reject':
                 event.delete()
@@ -335,7 +322,7 @@ class ProfileContributionPage(DetailView, DataMixin):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         author_id = self.kwargs.get('profile_id')
-        discussions = Discussion.objects.only('id', 'rating', 'creation_date', 'theme').filter(creator_id=author_id).order_by('-id')
+        discussions = get_user_discussions(author_id=author_id)
 
         paginator = Paginator(discussions, self.paginate_by)
         page_number = self.request.GET.get('page')
@@ -350,11 +337,7 @@ class ProfileContributionPage(DetailView, DataMixin):
 
     def get_object(self, queryset=None):
         profile_id = self.kwargs.get('profile_id')
-        user_des = Prefetch('userdescription',
-                            queryset=UserDescription.objects.only('id', 'sex', 'birth_date', 'political_orientation',
-                                                                  'art_style', 'ideology', 'credo', 'description', 'user_id'))
-        user_spec = Prefetch('userspecializations_set__specialization', queryset=Specializations.objects.all())
-        queryset = CustomUser.objects.filter(id=profile_id).prefetch_related(user_des, 'userspecializations_set', user_spec).only('id', 'username', 'avatar', 'level', 'date_joined')
+        queryset = get_profile_info(profile_id=profile_id)
         return get_object_or_404(queryset)
 
 
@@ -365,7 +348,7 @@ class DiscussionCreatePage(LoginRequiredMixin, CreateView, DataMixin):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-            specs = Specializations.objects.prefetch_related('interlocutiontags_set')
+            specs = get_specializations_and_tags()
             mix = self.get_user_context(title='new page', user_id=self.request.user.id, specs=specs)
         else:
             mix = self.get_user_context(title='Add title')
@@ -377,13 +360,11 @@ class DiscussionCreatePage(LoginRequiredMixin, CreateView, DataMixin):
         print(self.request.POST)
         selected_tags = self.request.POST.getlist('tag')
 
-        tags_ids = InterlocutionTags.objects.values_list('id', flat=True)
+        tags_ids = get_values_list_tags()
 
         valid_tags = [int(tag_id) for tag_id in selected_tags if int(tag_id) in tags_ids]
+        create_bulk_discussion_tags(dda_id=self.object.pk, valid_tags=valid_tags)
 
-        DiscussionTags.objects.bulk_create([
-            DiscussionTags(DDA_id=self.object.pk, tag_id=tag_id) for tag_id in valid_tags
-        ])
         success_url = self.object.get_absolute_url()
         return HttpResponseRedirect(success_url)
 
@@ -397,8 +378,8 @@ class DiscussionsPage(DataMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        tags = InterlocutionTags.objects.only('id', 'name').all()
-        author_or = UserDescription.UserPoliticalOrientation.choices
+        tags = get_all_tags()
+        author_or = get_p_orient_choices()
         if self.request.user.is_authenticated:
             mix = self.get_user_context(title='discussions', user_id=self.request.user.id, tags=tags,
                                         p_orients=author_or)
@@ -417,91 +398,70 @@ class DiscussionsPage(DataMixin, ListView):
         if len(p_orient_included) == 0 and len(p_orient_excluded) == 0:
             queryset = queryset.prefetch_related('discussiontags_set__tag')
             if len(tags_included) == 0 and len(tags_excluded) == 0:
-                queryset = queryset
+                queryset = get_custom_discussion(queryset)
             elif len(tags_included) != 0 and len(tags_excluded) != 0:
-                queryset = queryset.filter(discussiontags__tag__in=tags_included).annotate(
-                    num_tags=Count('discussiontags')).filter(num_tags=len(tags_included)).distinct()
-                queryset = queryset.exclude(discussiontags__tag__in=tags_excluded)
+                queryset = get_custom_discussion_inc_exc(queryset=queryset, tags_included=tags_included,
+                                                         tags_excluded=tags_excluded)
             elif len(tags_included) != 0:
-                queryset = queryset.filter(discussiontags__tag__in=tags_included).distinct().annotate(
-                    num_tags=Count('discussiontags')).filter(num_tags=len(tags_included))
+                queryset = get_custom_discussion_inc(queryset=queryset, tags_included=tags_included)
             elif len(tags_excluded) != 0:
-                queryset = queryset.exclude(discussiontags__tag__in=tags_excluded)
+                queryset = get_custom_discussion_exc(queryset, tags_excluded)
         elif len(p_orient_included) != 0 and len(p_orient_excluded) != 0:
-            queryset = queryset.prefetch_related(
-                Prefetch('creator__userdescription', queryset=UserDescription.objects.only('political_orientation')),
-                Prefetch('discussiontags_set__tag', queryset=InterlocutionTags.objects.all())
-            ).filter(creator__userdescription__political_orientation__in=p_orient_included).distinct().exclude(
-                creator__userdescription__political_orientation__in=p_orient_excluded)
+            queryset = get_custom_discussion_p_inc_p_exc(queryset=queryset, p_orient_included=p_orient_included,
+                                                         p_orient_excluded=p_orient_excluded)
             if len(tags_included) == 0 and len(tags_excluded) == 0:
                 queryset = queryset
             elif len(tags_included) != 0 and len(tags_excluded) != 0:
-                queryset = queryset.filter(discussiontags__tag__in=tags_included).annotate(
-                    num_tags=Count('discussiontags')).filter(num_tags=len(tags_included)).distinct()
-                queryset = queryset.exclude(discussiontags__tag__in=tags_excluded)
+                queryset = get_custom_discussion_p_inc_p_exc_inc_exc(queryset=queryset, tags_included=tags_included,
+                                                                     tags_excluded=tags_excluded)
             elif len(tags_excluded) == 0:
-                queryset = queryset.filter(discussiontags__tag__in=tags_included).annotate(
-                    num_tags=Count('discussiontags')).filter(num_tags=len(tags_included)).distinct()
+                queryset = get_custom_discussion_p_inc_p_exc_inc(queryset=queryset, tags_included=tags_included)
             elif len(tags_included) == 0:
-                queryset = queryset.exclude(discussiontags__tag__in=tags_excluded).annotate(
-                    num_tags=Count('discussiontags')).exclude(num_tags=len(tags_excluded)).distinct()
+                queryset = get_custom_discussion_p_inc_p_exc_exc(queryset=queryset, tags_excluded=tags_excluded)
         elif len(p_orient_included) == 0:
-            queryset = queryset.prefetch_related(
-                Prefetch('creator__userdescription', queryset=UserDescription.objects.only('political_orientation')),
-                Prefetch('discussiontags_set__tag', queryset=InterlocutionTags.objects.all())
-            ).exclude(creator__userdescription__political_orientation__in=p_orient_excluded)
+            queryset = get_custom_discussion_p_inc(queryset=queryset, p_orient_excluded=p_orient_excluded)
             if len(tags_included) == 0 and len(tags_excluded) == 0:
                 queryset = queryset
             elif len(tags_included) != 0 and len(tags_excluded) != 0:
-                queryset = queryset.filter(discussiontags__tag__in=tags_included).annotate(
-                    num_tags=Count('discussiontags')).filter(num_tags=len(tags_included)).distinct()
-                queryset = queryset.exclude(discussiontags__tag__in=tags_excluded)
+                queryset = get_custom_discussion_p_inc_inc_exc(queryset=queryset, tags_included=tags_included,
+                                                               tags_excluded=tags_excluded)
             elif len(tags_excluded) == 0:
-                queryset = queryset.filter(discussiontags__tag__in=tags_included).annotate(
-                    num_tags=Count('discussiontags')).filter(num_tags=len(tags_included)).distinct()
+                queryset = get_custom_discussion_p_inc_inc(queryset=queryset, tags_included=tags_included)
             elif len(tags_included) == 0:
-                queryset = queryset.exclude(discussiontags__tag__in=tags_excluded).annotate(
-                    num_tags=Count('discussiontags')).exclude(num_tags=len(tags_excluded)).distinct()
+                queryset = get_custom_discussion_p_inc_exc(queryset=queryset, tags_excluded=tags_excluded)
         elif len(p_orient_excluded) == 0:
-            queryset = queryset.prefetch_related(
-                Prefetch('creator__userdescription', queryset=UserDescription.objects.only('political_orientation')),
-                Prefetch('discussiontags_set__tag', queryset=InterlocutionTags.objects.all())
-            ).filter(creator__userdescription__political_orientation__in=p_orient_included).distinct()
+            queryset = get_custom_discussion_p_exc(queryset=queryset, p_orient_included=p_orient_included)
             if len(tags_included) == 0 and len(tags_excluded) == 0:
                 queryset = queryset
             elif len(tags_included) != 0 and len(tags_excluded) != 0:
-                queryset = queryset.filter(discussiontags__tag__in=tags_included).annotate(
-                    num_tags=Count('discussiontags')).filter(num_tags=len(tags_included)).distinct()
-                queryset = queryset.exclude(discussiontags__tag__in=tags_excluded)
+                queryset = get_custom_discussion_p_exc_inc_exc(queryset=queryset, tags_included=tags_included,
+                                                               tags_excluded=tags_excluded)
             elif len(tags_excluded) == 0:
-                queryset = queryset.filter(discussiontags__tag__in=tags_included).annotate(
-                    num_tags=Count('discussiontags')).filter(num_tags=len(tags_included)).distinct()
+                queryset = get_custom_discussion_p_exc_inc(queryset=queryset, tags_included=tags_included)
             elif len(tags_included) == 0:
-                queryset = queryset.exclude(discussiontags__tag__in=tags_excluded).annotate(
-                    num_tags=Count('discussiontags')).exclude(num_tags=len(tags_excluded)).distinct()
+                queryset = get_custom_discussion_p_exc_exc(queryset=queryset, tags_excluded=tags_excluded)
         return queryset
 
     def post(self, request, *args, **kwargs):
-        # print(request.POST)
         if request.POST.get('request_type') == 'discussion_grade':
             action = request.POST.get('action')
             discussion_id = request.POST.get('discussion_id')
             grader_id = request.POST.get('user_id')
             if grader_id is None:
                 return JsonResponse({'message': 'mistake'})
-            if Discussion.objects.filter(id=discussion_id).exclude(creator_id=grader_id):
-                discussion = Discussion.objects.get(id=discussion_id)
-                if not DiscussionGrades.objects.filter(discussion_id=discussion_id, user_id=grader_id).exists():
+            if not get_discussion_by_user(discussion_id=discussion_id, grader_id=grader_id):
+                discussion = get_discussion_objects_by_id(discussion_id)
+                if not get_discussion_grade_check(discussion_id=discussion_id, grader_id=grader_id):
                     if action == 'up':
                         discussion.rating += 1
                         discussion.save()
-                        DiscussionGrades.objects.create(user_grade='1', discussion_id=discussion_id, user_id=grader_id)
+                        create_grade_for_discussion(user_grade='1', discussion_id=discussion_id, grader_id=grader_id)
                     elif action == 'down':
                         discussion.rating -= 1
                         discussion.save()
-                        DiscussionGrades.objects.create(user_grade='0', discussion_id=discussion_id, user_id=grader_id)
+                        create_grade_for_discussion(user_grade='0', discussion_id=discussion_id, grader_id=grader_id)
                 else:
-                    grade = DiscussionGrades.objects.get(discussion_id=discussion_id, user_id=grader_id)
+                    grade = get_discussion_grade(discussion_id=discussion_id, grader_id=grader_id)
                     if action == 'up' and grade.user_grade == '0':
                         discussion.rating += 2
                         grade.user_grade = '1'
@@ -526,11 +486,7 @@ class DiscussionPage(DataMixin, DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        comments = DiscussionComments.objects.select_related('comment', 'comment__author', 'comment__parent_comment', 'comment__parent_comment__author')
-        comments = comments.only('id', 'comment__id', 'comment__upload_date', 'comment__comment', 'comment__rating',
-                                 'comment__author__avatar', 'comment__author__username',
-                                 'comment__parent_comment__author__username').filter(
-            DDA_id=self.kwargs.get('discussion_id')).order_by('id')
+        comments = get_comments_for_discussion(dda_id=self.kwargs.get('discussion_id'))
 
         paginator = Paginator(comments, self.paginate_by)
         page_number = self.request.GET.get('page')
@@ -544,7 +500,7 @@ class DiscussionPage(DataMixin, DetailView):
 
     def get_object(self, queryset=None):
         discussion = self.kwargs.get('discussion_id')
-        queryset = Discussion.objects.select_related('creator').only('id', 'theme', 'content', 'creation_date', 'creator__username').filter(id=discussion)
+        queryset = get_discussion_data(discussion_id=discussion)
         return get_object_or_404(queryset)
 
     def post(self, request, *args, **kwargs):
@@ -556,19 +512,19 @@ class DiscussionPage(DataMixin, DetailView):
             grader_id = request.POST.get('user_id')
             if grader_id is None:
                 return JsonResponse({'message': 'mistake'})
-            if Comments.objects.filter(id=comment_id).exclude(author_id=grader_id).exists():
-                comment = Comments.objects.get(id=comment_id)
-                if not CommentsRating.objects.filter(comment_id=comment_id, user_id=grader_id).exists():
+            if not get_comments_grade_check(comment_id=comment_id, grader_id=grader_id):
+                comment = get_user_comment(comment_id)
+                if not get_comment_by_user(comment_id=comment_id, grader_id=grader_id):
                     if action == 'up':
                         comment.rating += 1
                         comment.save()
-                        CommentsRating.objects.create(user_grade='1', comment_id=comment_id, user_id=grader_id)
+                        create_grade_for_comment(user_grade='1', comment_id=comment_id, grader_id=grader_id)
                     elif action == 'down':
                         comment.rating -= 1
                         comment.save()
-                        CommentsRating.objects.create(user_grade='0', comment_id=comment_id, user_id=grader_id)
+                        create_grade_for_comment(user_grade='0', comment_id=comment_id, grader_id=grader_id)
                 else:
-                    grade = CommentsRating.objects.get(comment_id=comment_id, user_id=grader_id)
+                    grade = get_comment_grade(comment_id=comment_id, grader_id=grader_id)
                     if action == 'up' and grade.user_grade == '0':
                         comment.rating += 2
                         grade.user_grade = '1'
@@ -585,8 +541,8 @@ class DiscussionPage(DataMixin, DetailView):
             comment_id = request.POST.get('comment_id')
             dda_id = request.POST.get('discussion_id')
             request_id = request.POST.get('user_id')
-            if Comments.objects.filter(id=comment_id, dda_id=dda_id, author_id=request_id).exists():
-                comment = Comments.objects.get(id=comment_id, dda_id=dda_id, author_id=request_id)
+            if get_comment_check(comment_id=comment_id, dda_id=dda_id, request_id=request_id):
+                comment = get_discussion_comment(comment_id=comment_id, dda_id=dda_id, request_id=request_id)
                 if comment.parent_comment is None:
                     comment.delete()
         elif request_type == 'comment_editing':
@@ -594,8 +550,8 @@ class DiscussionPage(DataMixin, DetailView):
             comment_id = request.POST.get('comment_id')
             dda_id = request.POST.get('discussion_id')
             request_id = request.POST.get('user_id')
-            if Comments.objects.filter(id=comment_id, dda_id=dda_id, author_id=request_id).exists():
-                comment = Comments.objects.get(id=comment_id, dda_id=dda_id, author_id=request_id)
+            if get_comment_check(comment_id=comment_id, dda_id=dda_id, request_id=request_id):
+                comment = get_discussion_comment(comment_id=comment_id, dda_id=dda_id, request_id=request_id)
                 if comment.is_replied is False:
                     edited_text = request.POST.get('edited_text')
                     comment.comment = edited_text
@@ -606,12 +562,13 @@ class DiscussionPage(DataMixin, DetailView):
             dda_id = request.POST.get('discussion_id')
             request_id = request.POST.get('user_id')
             replied_text = request.POST.get('repliedText')
-            if Comments.objects.filter(id=comment_id, dda_id=dda_id).exists():
-                comment = Comments(comment=replied_text, dda_id=dda_id, author_id=request_id, parent_comment_id=comment_id)
+            if get_comment_by_id_dda_id(comment_id=comment_id, dda_id=dda_id):
+                comment = get_comment_advanced(replied_text=replied_text, dda_id=dda_id, request_id=request_id,
+                                               comment_id=comment_id)
                 comment.save()
-                discussion_comment = DiscussionComments(DDA_id=dda_id, comment_id=comment.id)
+                discussion_comment = get_discussion_comments_by_id(dda_id=dda_id, comment_id=comment.id)
                 discussion_comment.save()
-                replied_comment = Comments.objects.get(id=comment_id)
+                replied_comment = get_user_comment(comment_id=comment_id)
                 replied_comment.is_replied = True
                 replied_comment.save()
         elif request_type == 'comment_new':
@@ -619,9 +576,9 @@ class DiscussionPage(DataMixin, DetailView):
             comment_text = request.POST.get('comment_text')
             dda_id = request.POST.get('discussion_id')
             request_id = request.POST.get('user_id')
-            comment = Comments(comment=comment_text, dda_id=dda_id, author_id=request_id)
+            comment = object_create_comment(comment_text=comment_text, dda_id=dda_id, request_id=request_id)
             comment.save()
-            discussion_comment = DiscussionComments(DDA_id=dda_id, comment_id=comment.id)
+            discussion_comment = get_discussion_comments_by_id(dda_id=dda_id, comment_id=comment.id)
             discussion_comment.save()
         return JsonResponse({'message': 'mistake'})
 
@@ -632,4 +589,3 @@ def pageNotFoundError(request, exception):
 def logout_user(request):
     logout(request)
     return redirect('home')
-

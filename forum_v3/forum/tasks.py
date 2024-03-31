@@ -12,7 +12,7 @@ def test_task():
 def users_promotion():
     date_to_calculate = date.today() - timedelta(days=1)
     try:
-        activities = (DailyActivity.objects.filter(date=date_to_calculate).values('user__id', 'activity_spec_id', 'activity_type').annotate(combinations=Sum(Case(When(activity_type='9', then=Value(5)), default=Value(1), output_field=IntegerField(),))))
+        activities = DailyActivity.objects.filter(date=date_to_calculate).values('user__id', 'activity_spec_id', 'activity_type').annotate(combinations=Sum(Case(When(activity_type='9', then=Value(5)), default=Value(1), output_field=IntegerField(),)))
         exp_for_specs = {spec_id: 0 for spec_id in range(1, 7)}
         for activity in activities:
             exp_for_specs[activity['activity_spec_id']] += activity['combinations']
