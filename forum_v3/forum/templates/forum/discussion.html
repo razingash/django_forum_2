@@ -89,7 +89,7 @@
                     <div class="comment__field" id="{{ comment.pk }}">
                         <div class="comment__core">
                             {% if not comment.comment.author.avatar %}
-                                <img src="{% static 'forum/default_avatar/avatar.png' %}" alt="wrong" class="comment__avatar">
+                                <img src="{% static 'forum/images/avatar.png' %}" alt="wrong" class="comment__avatar">
                             {% else %}
                                 <img src="{{ comment.comment.author.avatar.url }}" alt="wrong" class="comment__avatar">
                             {% endif %}

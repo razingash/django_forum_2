@@ -18,7 +18,7 @@
     <div class="profile">
         <div class="profile__face">
             {% if not user.avatar %}
-                <img src="{% static 'forum/default_avatar/avatar.png' %}" alt="wrong" class="profile__avatar">
+                <img src="{% static 'forum/images/avatar.png' %}" alt="wrong" class="profile__avatar">
             {% else %}
                 <img src="{{ user.avatar.url }}" alt="wrong" class="profile__avatar">
             {% endif %}

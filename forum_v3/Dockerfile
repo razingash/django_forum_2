@@ -9,3 +9,5 @@ COPY dockerfill.txt dockerfill.txt
 COPY . /app/
 
 RUN pip install -r requirements.txt
+
+CMD python manage.py collectstatic
