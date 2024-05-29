@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator, MinLengthValidator
 from django.db import models, connection
 from django.db.models import UniqueConstraint, Q
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -20,7 +20,7 @@ def user_avatar_upload(instance, filename):
 def validate_file_size(value):
     max_size = 2 * 512 * 512
     if value.size > max_size:
-        raise ValidationError(f'''Maximum file size mustn\'t exceed {max_size} bytes.''')
+        raise ValidationError(f'Maximum file size mustn\'t exceed {max_size} bytes.')
 
 def validate_image_size(image):
     required_width = 512
@@ -28,7 +28,7 @@ def validate_image_size(image):
     img = Image.open(image)
     (width, height) = img.size
     if width > required_width or height > required_height:
-        raise ValidationError(f'''Image mustn\'t be more {required_width}x{required_height} pixels.''')
+        raise ValidationError(f'Image mustn\'t be more {required_width}x{required_height} pixels.')
     if width != height:
         raise ValidationError('Image must be square')
 

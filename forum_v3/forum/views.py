@@ -66,7 +66,6 @@ class RulesPage(ListView, DataMixin):
         pass
 
 
-
 class RegistrationPage(CreateView, DataMixin):
     form_class = RegisterCustomUserForm
     template_name = 'forum/register_page.html'
@@ -110,6 +109,7 @@ class SettingsBasePage(LoginRequiredMixin, DataMixin, FormView):
             return context | mix
 
     def form_valid(self, form):
+        print('form valid')
         form.save()
         description_instance = self.request.user.userdescription
         description_form = ChangeCustomUserDescriptionForm(self.request.POST, instance=description_instance)
@@ -121,9 +121,6 @@ class SettingsBasePage(LoginRequiredMixin, DataMixin, FormView):
         kwargs = super().get_form_kwargs()
         kwargs['instance'] = self.request.user
         return kwargs
-
-    def get_object(self, queryset=None):
-        return self.request.user
 
 
 class SettingsPasswordPage(LoginRequiredMixin, PasswordChangeView, DataMixin):
@@ -371,15 +368,16 @@ class DiscussionCreatePage(LoginRequiredMixin, CreateView, DataMixin):
 
 class DiscussionsPage(DataMixin, ListView):
     model = Discussion
-    paginate_by = 10
     ordering = ['-id']
     template_name = 'forum/discussions.html'
     context_object_name = 'discussions'
+    paginate_by = 10
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         tags = get_all_tags()
         author_or = get_p_orient_choices()
+
         if self.request.user.is_authenticated:
             mix = self.get_user_context(title='discussions', user_id=self.request.user.id, tags=tags,
                                         p_orients=author_or)
@@ -482,7 +480,7 @@ class DiscussionPage(DataMixin, DetailView):
     model = Discussion
     template_name = 'forum/discussion.html'
     context_object_name = 'discussion'
-    paginate_by = 15
+    paginate_by = 10
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)

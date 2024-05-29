@@ -1,3 +1,4 @@
 /.gitignore/
-/.idea/
+/.idea
 /venv
+/forum_v3/static

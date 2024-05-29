@@ -24,7 +24,8 @@ handler404 = pageNotFoundError
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('forum/', include('forum.urls'))]
+    path('forum/', include('forum.urls'))
+]
 
 if settings.DEBUG:
     import debug_toolbar
